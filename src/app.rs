@@ -34,7 +34,7 @@ impl App {
 
         let listener = TcpListener::bind("0.0.0.0:3000").await?;
         let router = Router::new()
-            .route("/", get(list_assets))
+            .route("/", get(list_assets).post(create_asset))
             .with_state(AppState::new());
         
         info!("Server running on http://0.0.0.0:3000");
@@ -47,4 +47,9 @@ impl App {
 async fn list_assets(state: State<AppState>) -> Json<Vec<Asset>> {
     let assets = state.assets.lock().await;
     Json(assets.clone())
+}
+
+#[tracing::instrument(skip_all)]
+async fn create_asset(state: State<AppState>) -> Json<Asset> {
+    todo!()
 }
