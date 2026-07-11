@@ -1,9 +1,7 @@
 use crate::models::Asset;
-use std::sync::Arc;
-use serde::{Deserialize};
-use axum::{Json, Router, routing::get};
-use axum::extract::State;
+use axum::routing::Router;
 use color_eyre::eyre::Ok;
+use std::sync::Arc;
 use tokio::{net::TcpListener, sync::Mutex};
 use tracing::info;
 use tracing_subscriber::{
@@ -34,35 +32,10 @@ impl App {
         tracing_subscriber::registry().with(layer).init();
 
         let listener = TcpListener::bind("0.0.0.0:3000").await?;
-        let router = Router::new()
-            .route("/", get(list_assets).post(create_asset))
-            .with_state(AppState::new());
-        
+        let router = Router::new().nest("/api", crate::routes::api::router()).with_state(AppState::new());
+
         info!("Server running on http://0.0.0.0:3000");
         axum::serve(listener, router).await?;
         Ok(())
     }
-}
-
-#[tracing::instrument(skip_all)]
-async fn list_assets(state: State<AppState>) -> Json<Vec<Asset>> {
-    let assets = state.assets.lock().await;
-    Json(assets.clone())
-}
-
-#[derive(Deserialize)]
-struct CreateAssetRequest {
-    pub name: String,
-    pub unit_value: i32,
-}
-
-#[tracing::instrument(skip_all)]
-async fn create_asset(state: State<AppState>, Json(request): Json<CreateAssetRequest>) -> Json<Asset> {
-    let mut assets = state.assets.lock().await;
-    
-    let id  = assets.iter().map(|asset| asset.id).max().unwrap_or_default() + 1;
-
-    let new_asset = Asset {id: id, name: request.name, unit_value: request.unit_value};
-    assets.push(new_asset.clone());
-    Json(new_asset)
 }
