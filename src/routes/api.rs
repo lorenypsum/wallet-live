@@ -1,5 +1,6 @@
 use axum::{Json, Router, extract::State, routing::get};
 use serde::Deserialize;
+use crate::auth::admin::Admin;
 
 use crate::{app::AppState, models::Asset};
 
@@ -23,6 +24,7 @@ struct CreateAssetRequest {
 
 #[tracing::instrument(skip_all)]
 async fn create_asset(
+    _admin: Admin,
     state: State<AppState>,
     Json(request): Json<CreateAssetRequest>,
 ) -> Json<Asset> {

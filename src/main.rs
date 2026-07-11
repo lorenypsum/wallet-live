@@ -1,6 +1,7 @@
 mod app;
 mod models;
 mod routes;
+mod auth;
 
 
 #[tokio::main]
