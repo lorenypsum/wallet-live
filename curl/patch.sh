@@ -1,0 +1,1 @@
+curl -v localhost:3000/api/assets -H "content-type: application/json" -d  '{"id": 1, "name":"Bitcoin","unit_value":20}' -H "Authorization:im-the-admin" -X PATCH 

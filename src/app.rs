@@ -1,7 +1,7 @@
 use crate::models::Asset;
 use axum::routing::Router;
 use color_eyre::eyre::Ok;
-use std::sync::Arc;
+use std::{sync::Arc, collections::HashMap};
 use tokio::{net::TcpListener, sync::Mutex};
 use tracing::info;
 use tracing_subscriber::{
@@ -10,7 +10,7 @@ use tracing_subscriber::{
 
 #[derive(Clone)]
 pub struct AppState {
-    pub assets: Arc<Mutex<Vec<Asset>>>,
+    pub assets: Arc<Mutex<HashMap<i64, Asset>>>,
 }
 
 impl AppState {
