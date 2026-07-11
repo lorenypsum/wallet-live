@@ -53,10 +53,16 @@ async fn list_assets(state: State<AppState>) -> Json<Vec<Asset>> {
 #[derive(Deserialize)]
 struct CreateAssetRequest {
     pub name: String,
-    pub unit_value: String,
+    pub unit_value: i32,
 }
 
 #[tracing::instrument(skip_all)]
 async fn create_asset(state: State<AppState>, Json(request): Json<CreateAssetRequest>) -> Json<Asset> {
-    todo!()
+    let mut assets = state.assets.lock().await;
+    
+    let id  = assets.iter().map(|asset| asset.id).max().unwrap_or_default() + 1;
+
+    let new_asset = Asset {id: id, name: request.name, unit_value: request.unit_value};
+    assets.push(new_asset.clone());
+    Json(new_asset)
 }
