@@ -1,5 +1,6 @@
 use crate::models::Asset;
 use std::sync::Arc;
+use serde::{Deserialize};
 use axum::{Json, Router, routing::get};
 use axum::extract::State;
 use color_eyre::eyre::Ok;
@@ -49,7 +50,13 @@ async fn list_assets(state: State<AppState>) -> Json<Vec<Asset>> {
     Json(assets.clone())
 }
 
+#[derive(Deserialize)]
+struct CreateAssetRequest {
+    pub name: String,
+    pub unit_value: String,
+}
+
 #[tracing::instrument(skip_all)]
-async fn create_asset(state: State<AppState>) -> Json<Asset> {
+async fn create_asset(state: State<AppState>, Json(request): Json<CreateAssetRequest>) -> Json<Asset> {
     todo!()
 }
