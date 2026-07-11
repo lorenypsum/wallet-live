@@ -1,4 +1,4 @@
-use crate::auth::admin::Admin;
+use crate::{auth::admin::Admin, error::app_error::AppError};
 use axum::{Json, Router, extract::State, routing::get};
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -58,10 +58,10 @@ async fn update_asset(
     _admin: Admin,
     state: State<AppState>,
     Json(request): Json<UpdateAssetRequest>,
-) -> Result<Json<Asset>, &'static str> {
+) -> Result<Json<Asset>, AppError> {
     let mut assets = state.assets.lock().await;
     let Some(existing_asset) = assets.get_mut(&request.id) else {
-        return Err("Asset not found");
+        return Err(AppError::AssetNotFound);
     };
 
     if let Some(new_name) = request.name {
