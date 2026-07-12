@@ -34,9 +34,8 @@ impl IntoResponse for AppError {
             AppError::MissingAuthorization => StatusCode::BAD_REQUEST,
             AppError::InvalidCredentials => StatusCode::UNAUTHORIZED,
             AppError::AssetNotFound => StatusCode::NOT_FOUND,
-            AppError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::Database(_) | AppError::TemplateError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::UsernameTaken => StatusCode::CONFLICT,
-            AppError::TemplateError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         (status, Json(error_response)).into_response()

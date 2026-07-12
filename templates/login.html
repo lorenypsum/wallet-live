@@ -4,179 +4,139 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login | Wallet Live</title>
-    <style>
-      :root {
-        --bg: #f4f7fb;
-        --card: #ffffff;
-        --text: #1f2937;
-        --muted: #6b7280;
-        --primary: #2563eb;
-        --primary-hover: #1d4ed8;
-        --border: #d1d5db;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
-      }
-
-      .login-container {
-        width: 100%;
-        max-width: 420px;
-        background: var(--card);
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        padding: 32px;
-      }
-
-      h1 {
-        margin: 0 0 8px;
-        font-size: 1.8rem;
-      }
-
-      p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.5;
-      }
-
-      .subtitle {
-        margin-bottom: 24px;
-      }
-
-      .form-group {
-        margin-bottom: 16px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        font-size: 0.95rem;
-      }
-
-      input {
-        width: 100%;
-        padding: 12px 14px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        font-size: 1rem;
-        outline: none;
-        transition:
-          border-color 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-
-      input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-      }
-
-      .options {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin: 16px 0 20px;
-        font-size: 0.95rem;
-      }
-
-      .remember {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--muted);
-      }
-
-      .forgot,
-      .footer a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 600;
-      }
-
-      .forgot:hover,
-      .footer a:hover {
-        text-decoration: underline;
-      }
-
-      button {
-        width: 100%;
-        padding: 12px 16px;
-        border: none;
-        border-radius: 10px;
-        background: var(--primary);
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.2s ease;
-      }
-
-      button:hover {
-        background: var(--primary-hover);
-      }
-
-      .footer {
-        margin-top: 20px;
-        text-align: center;
-        font-size: 0.95rem;
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Manrope", "sans-serif"],
+            },
+            colors: {
+              ink: "#0f172a",
+              ocean: "#0f6efd",
+              skyline: "#8bd7ff",
+            },
+          },
+        },
+      };
+    </script>
   </head>
-  <body>
-    <main class="login-container">
-      <h1>Entrar na plataforma</h1>
-      <p class="subtitle">
-        Acesse sua conta para continuar gerenciando suas informações com
-        segurança.
-      </p>
+  <body class="min-h-screen bg-slate-950 font-sans text-slate-100">
+    <div class="relative isolate min-h-screen overflow-hidden">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(1000px_500px_at_10%_-10%,rgba(139,215,255,0.35),transparent),radial-gradient(800px_500px_at_90%_120%,rgba(15,110,253,0.45),transparent),linear-gradient(160deg,#020617_0%,#0f172a_40%,#082f49_100%)]"
+      ></div>
 
-      <form action="#" method="post">
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="seuemail@exemplo.com"
-            required
-          />
-        </div>
+      <main
+        class="relative mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-10 sm:px-10"
+      >
+        <section class="hidden w-1/2 pr-10 lg:block">
+          <p
+            class="mb-5 inline-flex rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-skyline"
+          >
+            Wallet Live
+          </p>
+          <h1
+            class="max-w-lg text-4xl font-extrabold leading-tight text-white xl:text-5xl"
+          >
+            Sua carteira digital com foco em velocidade e controle.
+          </h1>
+          <p class="mt-5 max-w-md text-base leading-relaxed text-slate-300">
+            Entre para acompanhar movimentacoes, validar seguranca da conta e
+            manter seus dados centralizados em um unico painel.
+          </p>
+        </section>
 
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Digite sua senha"
-            required
-          />
-        </div>
+        <section class="w-full lg:w-1/2">
+          <div
+            class="mx-auto w-full max-w-md rounded-3xl border border-white/15 bg-white/95 p-7 text-ink shadow-2xl shadow-black/30 backdrop-blur sm:p-9"
+          >
+            <div class="mb-7">
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+              >
+                Acesso Seguro
+              </p>
+              <h2 class="mt-2 text-3xl font-extrabold text-slate-900">
+                Entrar na plataforma
+              </h2>
+              <p class="mt-2 text-sm leading-relaxed text-slate-600">
+                Acesse sua conta para continuar gerenciando suas informações com
+                segurança.
+              </p>
+            </div>
 
-        <div class="options">
-          <label class="remember">
-            <input type="checkbox" name="remember" />
-            Lembrar-me
-          </label>
-          <a class="forgot" href="#">Esqueceu a senha?</a>
-        </div>
+            <form action="#" method="post" class="space-y-5">
+              <div>
+                <label
+                  for="email"
+                  class="mb-2 block text-sm font-semibold text-slate-700"
+                  >E-mail</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="seuemail@exemplo.com"
+                  required
+                  class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-ocean focus:ring-4 focus:ring-blue-100"
+                />
+              </div>
 
-        <button type="submit">Entrar</button>
-      </form>
+              <div>
+                <label
+                  for="password"
+                  class="mb-2 block text-sm font-semibold text-slate-700"
+                  >Senha</label
+                >
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Digite sua senha"
+                  required
+                  class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-ocean focus:ring-4 focus:ring-blue-100"
+                />
+              </div>
 
-      <p class="footer">Não tem uma conta? <a href="#">Criar conta</a></p>
-    </main>
+              <div class="flex items-center justify-between gap-3 text-sm">
+                <label class="inline-flex items-center gap-2 text-slate-600">
+                  <input
+                    type="checkbox"
+                    name="remember"
+                    class="size-4 rounded border-slate-300 text-ocean focus:ring-ocean"
+                  />
+                  Lembrar-me
+                </label>
+                <a href="#" class="font-semibold text-ocean hover:text-blue-700"
+                  >Esqueceu a senha?</a
+                >
+              </div>
+
+              <button
+                type="submit"
+                class="inline-flex w-full items-center justify-center rounded-xl bg-ocean px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+              >
+                Entrar
+              </button>
+            </form>
+
+            <p class="mt-6 text-center text-sm text-slate-600">
+              Não tem uma conta?
+              <a href="#" class="font-semibold text-ocean hover:text-blue-700"
+                >Criar conta</a
+              >
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
   </body>
 </html>

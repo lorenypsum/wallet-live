@@ -7,6 +7,8 @@ use tracing_subscriber::{
     Layer, fmt::format::FmtSpan, layer::SubscriberExt, util::SubscriberInitExt,
 };
 
+use crate::routes;
+
 #[derive(Clone)]
 pub struct AppState {
     pub db: PgPool,
@@ -39,6 +41,7 @@ impl App {
         let listener = TcpListener::bind("0.0.0.0:3000").await?;
         let router = Router::new()
             .nest("/api", crate::routes::api::router())
+            .merge(routes::front_end::router())
             .with_state(state);
 
         info!("Server running on http://0.0.0.0:3000");

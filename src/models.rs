@@ -7,6 +7,7 @@ pub struct  Asset {
     pub unit_value: f64
 }
 
+//Todo: alterar para usar email com validação de email.
 pub struct UserRecord {
     pub id: i64,
     pub username: String,
