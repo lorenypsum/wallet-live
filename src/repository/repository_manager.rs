@@ -1,5 +1,6 @@
+use crate::routes::api::CreateAssetRequest;
+use crate::routes::api::create_asset;
 use std::convert::Infallible;
-
 use axum::extract::FromRequestParts;
 use sqlx::PgPool;
 
@@ -9,7 +10,7 @@ use crate::{
 };
 
 pub struct Repository {
-    pub db: PgPool,
+    db: PgPool,
 }
 
 impl Repository {
@@ -56,5 +57,34 @@ impl FromRequestParts<AppState> for Repository {
         Ok(Self {
             db: state.db.clone(),
         })
+    }
+}
+
+#[cfg(test)]
+impl From<PgPool> for Repository {
+    fn from(db: PgPool) -> Self {
+        Self { db }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use axum::Json;
+    use sqlx::PgPool;
+    use crate::auth::admin::Admin;
+
+use super::*;
+
+    #[sqlx::test]
+    async fn test_create_asset(db: PgPool) {
+        let request = CreateAssetRequest {
+            name: "Test Asset".to_string(),
+            unit_value: 100.0,
+        };
+        let Json(new_asset) = create_asset(Admin, db.into(), Json(request)).await.expect("Success");
+        assert_eq!(new_asset.id, 1);
+        assert_eq!(new_asset.name, "Test Asset");
+        assert_eq!(new_asset.unit_value, 100.0);
     }
 }

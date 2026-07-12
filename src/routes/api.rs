@@ -23,13 +23,13 @@ async fn list_assets(repository: Repository) -> Result<Json<Vec<Asset>>, AppErro
 }
 
 #[derive(Deserialize)]
-struct CreateAssetRequest {
+pub struct CreateAssetRequest {
     pub name: String,
     pub unit_value: f64,
 }
 
 #[tracing::instrument(skip_all)]
-async fn create_asset(
+pub async fn create_asset(
     _admin: Admin,
     repository: Repository,
     Json(request): Json<CreateAssetRequest>,
