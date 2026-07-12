@@ -86,5 +86,8 @@ use super::*;
         assert_eq!(new_asset.id, 1);
         assert_eq!(new_asset.name, "Test Asset");
         assert_eq!(new_asset.unit_value, 100.0);
+
+        insta::assert_json_snapshot!(new_asset);
+        // cargo insta review --accept
     }
 }

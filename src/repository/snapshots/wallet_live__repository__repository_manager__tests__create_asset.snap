@@ -1,0 +1,9 @@
+---
+source: src/repository/repository_manager.rs
+expression: new_asset
+---
+{
+  "id": 1,
+  "name": "Test Asset",
+  "unit_value": 100.0
+}
