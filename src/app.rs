@@ -1,7 +1,8 @@
 use crate::models::Asset;
 use axum::routing::Router;
 use color_eyre::eyre::Ok;
-use std::{sync::Arc, collections::HashMap};
+use sqlx::PgPool;
+use std::{collections::HashMap, sync::Arc};
 use tokio::{net::TcpListener, sync::Mutex};
 use tracing::info;
 use tracing_subscriber::{
@@ -11,13 +12,18 @@ use tracing_subscriber::{
 #[derive(Clone)]
 pub struct AppState {
     pub assets: Arc<Mutex<HashMap<i64, Asset>>>,
+    pub db: PgPool,
 }
 
 impl AppState {
-    pub fn new() -> Self {
-        Self {
+    // TODO: escrever um sqlx error -> Result<Self, sqlx::Error>
+    pub async fn new() -> color_eyre::Result<Self> {
+        let database_url = std::env::var("DATABASE_URL")?;
+        let db = PgPool::connect(&database_url).await?;
+        Ok(Self {
             assets: Default::default(),
-        }
+            db,
+        })
     }
 }
 
@@ -31,8 +37,12 @@ impl App {
 
         tracing_subscriber::registry().with(layer).init();
 
+        let state = AppState::new().await?;
+
         let listener = TcpListener::bind("0.0.0.0:3000").await?;
-        let router = Router::new().nest("/api", crate::routes::api::router()).with_state(AppState::new());
+        let router = Router::new()
+            .nest("/api", crate::routes::api::router())
+            .with_state(state);
 
         info!("Server running on http://0.0.0.0:3000");
         axum::serve(listener, router).await?;
