@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login | Wallet Live</title>
+    <title>Criar conta | Wallet Live</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -46,11 +46,11 @@
           <h1
             class="max-w-lg text-4xl font-extrabold leading-tight text-white xl:text-5xl"
           >
-            Sua carteira digital com foco em velocidade e controle.
+            Crie sua conta para começar a organizar suas finanças.
           </h1>
           <p class="mt-5 max-w-md text-base leading-relaxed text-slate-300">
-            Entre para acompanhar movimentacoes, validar seguranca da conta e
-            manter seus dados centralizados em um unico painel.
+            O cadastro salva seu usuário no banco de dados e libera o acesso ao
+            painel da aplicação.
           </p>
         </section>
 
@@ -62,18 +62,17 @@
               <p
                 class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
               >
-                Acesso Seguro
+                Cadastro
               </p>
               <h2 class="mt-2 text-3xl font-extrabold text-slate-900">
-                Entrar na plataforma
+                Criar conta
               </h2>
               <p class="mt-2 text-sm leading-relaxed text-slate-600">
-                Acesse sua conta para continuar gerenciando suas informações com
-                segurança.
+                Preencha seu usuário e senha para registrar uma nova conta.
               </p>
             </div>
 
-            <form action="/login" method="post" class="space-y-5">
+            <form action="/register" method="post" class="space-y-5">
               <div>
                 <label
                   for="username"
@@ -106,32 +105,20 @@
                 />
               </div>
 
-              <div class="flex items-center justify-between gap-3 text-sm">
-                <label class="inline-flex items-center gap-2 text-slate-600">
-                  <input
-                    type="checkbox"
-                    name="remember"
-                    class="size-4 rounded border-slate-300 text-ocean focus:ring-ocean"
-                  />
-                  Lembrar-me
-                </label>
-                <a href="#" class="font-semibold text-ocean hover:text-blue-700"
-                  >Esqueceu a senha?</a
-                >
-              </div>
-
               <button
                 type="submit"
                 class="inline-flex w-full items-center justify-center rounded-xl bg-ocean px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
               >
-                Entrar
+                Registrar
               </button>
             </form>
 
             <p class="mt-6 text-center text-sm text-slate-600">
-              Não tem uma conta?
-              <a href="/register" class="font-semibold text-ocean hover:text-blue-700"
-                >Criar conta</a
+              Já tem uma conta?
+              <a
+                href="/login"
+                class="font-semibold text-ocean hover:text-blue-700"
+                >Entrar</a
               >
             </p>
           </div>

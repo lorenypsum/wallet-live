@@ -15,6 +15,8 @@ pub enum AppError {
     Database(#[from] sqlx::Error),
     #[error("This username already exists.")]
     UsernameTaken,
+    #[error("User does not exist.")]
+    UserNotFound,
     #[error(transparent)]
     TemplateError(#[from] askama::Error),
 }
@@ -33,7 +35,7 @@ impl IntoResponse for AppError {
         let status = match self {
             AppError::MissingAuthorization => StatusCode::BAD_REQUEST,
             AppError::InvalidCredentials => StatusCode::UNAUTHORIZED,
-            AppError::AssetNotFound => StatusCode::NOT_FOUND,
+            AppError::AssetNotFound | AppError::UserNotFound => StatusCode::NOT_FOUND,
             AppError::Database(_) | AppError::TemplateError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::UsernameTaken => StatusCode::CONFLICT,
         };

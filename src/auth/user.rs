@@ -35,6 +35,10 @@ impl UnauthenticatedUser {
 
     Ok(User::new(user_record.id, user_record.username))
     }
+    
+    pub fn new(username: String, password: String) -> Self {
+        Self { username: username, password: password }
+    }
 }
 
 pub struct User {
@@ -45,5 +49,13 @@ pub struct User {
 impl User {
     pub fn new(id: i64, username: String) -> Self {
         Self { id, username }
+    }
+    
+    pub const fn id(&self) -> i64 {
+        self.id
+    }
+    
+    pub const fn username(&self) -> &String {
+        &self.username
     }
 }
