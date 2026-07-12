@@ -4,6 +4,6 @@ expression: new_asset
 ---
 {
   "id": 1,
-  "name": "Test Asset",
+  "name": "Bitcoin",
   "unit_value": 100.0
 }

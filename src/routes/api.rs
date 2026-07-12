@@ -17,7 +17,7 @@ pub fn router() -> Router<AppState> {
 }
 
 #[tracing::instrument(skip_all)]
-async fn list_assets(repository: Repository) -> Result<Json<Vec<Asset>>, AppError> {
+pub async fn list_assets(repository: Repository) -> Result<Json<Vec<Asset>>, AppError> {
     let assets = repository.list_assets().await?;
     Ok(Json(assets))
 }
@@ -41,14 +41,14 @@ pub async fn create_asset(
 }
 
 #[derive(Deserialize)]
-struct UpdateAssetRequest {
-    id: i64,
+pub struct UpdateAssetRequest {
+    pub id: i64,
     pub name: Option<String>,
     pub unit_value: Option<f64>,
 }
 
 #[tracing::instrument(skip_all)]
-async fn update_asset(
+pub async fn update_asset(
     _admin: Admin,
     repository: Repository,
     Json(request): Json<UpdateAssetRequest>,

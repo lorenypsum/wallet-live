@@ -1,0 +1,11 @@
+---
+source: src/repository/repository_manager.rs
+expression: assets
+---
+[
+  {
+    "id": 1,
+    "name": "Bitcoin",
+    "unit_value": 100.0
+  }
+]
