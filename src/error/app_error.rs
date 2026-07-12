@@ -13,6 +13,8 @@ pub enum AppError {
     AssetNotFound,
     #[error(transparent)]
     Database(#[from] sqlx::Error),
+    #[error("This username already exists.")]
+    UsernameTaken,
 }
 
 #[derive(Serialize)]
@@ -31,6 +33,7 @@ impl IntoResponse for AppError {
             AppError::InvalidCredentials => StatusCode::UNAUTHORIZED,
             AppError::AssetNotFound => StatusCode::NOT_FOUND,
             AppError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::UsernameTaken => StatusCode::CONFLICT,
         };
 
         (status, Json(error_response)).into_response()
