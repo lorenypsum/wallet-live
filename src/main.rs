@@ -5,6 +5,7 @@ mod models;
 mod routes;
 mod repository; 
 
+//model to use in other projects
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
     dotenvy::dotenv().ok();
