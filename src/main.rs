@@ -2,8 +2,8 @@ mod app;
 mod auth;
 mod error;
 mod models;
+mod repository;
 mod routes;
-mod repository; 
 
 //model to use in other projects
 #[tokio::main]
