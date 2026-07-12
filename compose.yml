@@ -1,0 +1,16 @@
+# Install OrbStack CLI and Docker Compose if not already installed.
+# Run docker compose up to start the PostgreSQL database service.
+# Run cargo sqlx migrate run
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+volumes:
+  postgres:      

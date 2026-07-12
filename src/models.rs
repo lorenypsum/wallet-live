@@ -4,5 +4,5 @@ use serde::{Serialize, Deserialize};
 pub struct  Asset {
     pub id: i64,
     pub name: String,
-    pub unit_value: i32
+    pub unit_value: f64
 }
