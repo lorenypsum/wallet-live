@@ -1,5 +1,3 @@
-use crate::routes::api::CreateAssetRequest;
-use crate::routes::api::create_asset;
 use std::convert::Infallible;
 use axum::extract::FromRequestParts;
 use sqlx::PgPool;
