@@ -71,7 +71,8 @@ mod tests {
     use axum::Json;
     use sqlx::PgPool;
     use crate::{auth::admin::Admin, routes::api::{UpdateAssetRequest, list_assets, update_asset}};
-
+    use crate::routes::api::CreateAssetRequest;
+    use crate::routes::api::create_asset;
 use super::*;
 
     #[sqlx::test]
