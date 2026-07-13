@@ -1,9 +1,13 @@
 use std::f32::consts::E;
 
 use password_auth::VerifyError;
+use jwt_simple::{algorithms::MACLike, claims, prelude::{Claims, Duration, HS256Key, NoCustomClaims}};
+use serde::{Deserialize, Serialize};
 
-use crate::{auth::user, error::app_error::AppError, repository::repository_manager::Repository};
+use crate::{app::App, auth::user, error::app_error::AppError, repository::repository_manager::Repository};
 
+//TODO: procurar um método mais elaborado para um projeto real emde proteção de rotas, talvez com JWT
+const SECRET_KEY: &[u8] = b"supersecretkeyyoushouldnotcommit";
 pub struct UnauthenticatedUser {
     pub username: String,
     pub password: String,
@@ -57,5 +61,34 @@ impl User {
     
     pub const fn username(&self) -> &String {
         &self.username
+    }
+
+    pub fn auth_token(self) -> Result<String, AppError> {
+        let key = HS256Key::from_bytes(SECRET_KEY);
+        //TODO: adicionar alguma informação para o usuário refazer a autenticação. (refresh token)
+        let claims = Claims::with_custom_claims(UserClaims::from(self), Duration::from_mins(10));
+        let token = key.authenticate(claims)?;
+        Ok(token)
+    }
+
+    pub fn from_auth_token(token: &str) -> Result<Self, AppError> {
+        let key = HS256Key::from_bytes(SECRET_KEY);
+        let claims: UserClaims = key.verify_token(token, None)?.custom;
+        Ok(Self::new(claims.id, claims.username))
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+struct UserClaims {
+    id: i64,
+    username: String,
+}
+
+impl From<User> for UserClaims {
+    // Não entendi bem essa sintaxe.
+    fn from(User {id, username}: User) -> Self {
+        Self {
+            id, username
+        }
     }
 }
