@@ -1,10 +1,12 @@
-use std::f32::consts::E;
+use std::convert::Infallible;
 
+use axum::extract::FromRequestParts;
+use axum_extra::extract::CookieJar;
 use password_auth::VerifyError;
-use jwt_simple::{algorithms::MACLike, claims, prelude::{Claims, Duration, HS256Key, NoCustomClaims}};
+use jwt_simple::{algorithms::MACLike, prelude::{Claims, Duration, HS256Key}};
 use serde::{Deserialize, Serialize};
 
-use crate::{app::App, auth::user, error::app_error::AppError, repository::repository_manager::Repository};
+use crate::{app::{AppState}, error::app_error::AppError, repository::repository_manager::Repository};
 
 //TODO: procurar um método mais elaborado para um projeto real emde proteção de rotas, talvez com JWT
 const SECRET_KEY: &[u8] = b"supersecretkeyyoushouldnotcommit";
@@ -90,5 +92,33 @@ impl From<User> for UserClaims {
         Self {
             id, username
         }
+    }
+}
+
+impl FromRequestParts<AppState> for User {
+    type Rejection = AppError;
+
+    async  fn from_request_parts(
+        parts: &mut axum::http::request::Parts,
+        _state: &AppState,
+    ) -> Result<Self, Self::Rejection> {
+        let jar = CookieJar::from_headers(&parts.headers);
+        
+        let token = match jar.get("token") {
+            Some(token) => token.value(),
+            None => return Err(AppError::MissingAuthorization),
+        };
+        User::from_auth_token(token)
+    }
+}
+
+impl FromRequestParts<AppState> for Option<User> {
+    type Rejection = Infallible;
+
+    async fn from_request_parts(
+        parts: &mut axum::http::request::Parts,
+        _state: &AppState,
+    ) -> Result<Self, Self::Rejection> {
+        Ok(User::from_request_parts(parts, _state).await.ok())
     }
 }

@@ -3,7 +3,7 @@ use crate::{
 };
 use askama::Template;
 use axum::{
-    Form, Router, extract::FromRequestParts, response::{Html, IntoResponse, Redirect}, routing::{get, post},
+    Form, Router, response::{Html, IntoResponse, Redirect, Response}, routing::{get, post},
 };
 use axum_extra::extract::{CookieJar, cookie::{Cookie}};
 use serde::Deserialize;
@@ -59,7 +59,6 @@ async fn login(
 
 }
 
-//TODO: review this function
 #[tracing::instrument(skip_all)]
 async fn register(
     repository: Repository,
@@ -73,23 +72,15 @@ async fn register(
     Ok((jar.add(cookie), Redirect::to("/"))) // Replace with actual HTML rendering
 }
 
-async fn index(user: User) -> Result<Html<String>, AppError> {
-    Ok(Html(format!("Welcome, {}!", user.username())))
-}
-
-impl FromRequestParts<AppState> for User {
-    type Rejection = AppError;
-
-    async  fn from_request_parts(
-        parts: &mut axum::http::request::Parts,
-        _state: &AppState,
-    ) -> Result<Self, Self::Rejection> {
-        let jar = CookieJar::from_headers(&parts.headers);
-        
-        let token = match jar.get("token") {
-            Some(token) => token.value(),
-            None => return Err(AppError::MissingAuthorization),
-        };
-        User::from_auth_token(token)
+async fn index(maybe_user: Option<User>) -> Result<Response, AppError> {
+    match maybe_user {
+        Some(user) => {
+            let html = format!("<h1>Welcome, {}!</h1>", user.username()).into_response();
+            Ok(html)
+        }
+        None => {
+            Ok(Redirect::to("/login").into_response())
+        }
     }
 }
+
