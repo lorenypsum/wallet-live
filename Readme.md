@@ -77,7 +77,7 @@ O valor de ativos que foram cadastrados a partir das opções pré-selecionadas 
 - Validações para evitar quantidades e valores inválidos.
 - Mensagens de erro e sucesso no fluxo de login, registro e dashboard.
 - Testes novos para validações e edição de posição.
-- Validação de nome e senha de usuário no registro, com mensagens de feedback.
+- Validação de nome e senha de usuário no momento do registro, com mensagens de feedback.
 
 ## Como testar sua versão
 
