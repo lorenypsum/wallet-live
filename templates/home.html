@@ -47,10 +47,7 @@
             <span class="text-xl font-bold">W</span>
           </div>
           <div>
-            <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">
-              wallet - live
-            </p>
-            <p class="text-sm text-forest/70">Gestão clara de ativos</p>
+            <p class="text-sm text-forest/70">Gestão de ativos</p>
           </div>
         </a>
 
@@ -85,18 +82,12 @@
         class="relative z-10 mx-auto grid min-h-[calc(100vh-88px)] max-w-7xl items-center gap-14 px-6 pb-14 pt-4 sm:px-10 lg:grid-cols-[1.1fr_0.9fr]"
       >
         <section>
-          <div
-            class="mb-8 inline-flex items-center gap-2 rounded-full border border-forest/15 bg-white/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-moss shadow-sm"
-          >
-            <span class="h-2 w-2 rounded-full bg-clay"></span>
-            Painel financeiro
-          </div>
 
           {% if logged_in %}
           <h1
             class="max-w-2xl font-display text-5xl leading-[0.95] text-forest md:text-7xl"
           >
-            Bem-vindo, {{ username }}.
+            Bem-vindo, {{ username | capitalize }}.
             <span class="italic text-clay">Seu dashboard</span> está pronto.
           </h1>
           <p class="mt-6 max-w-xl text-lg leading-relaxed text-forest/75">
