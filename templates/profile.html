@@ -37,8 +37,39 @@
         class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(95,122,88,0.2),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(181,113,46,0.16),transparent_28%),linear-gradient(180deg,#f2ecde_0%,#ebe5d5_40%,#e5ddca_100%)]"
       ></div>
 
+      <header
+        class="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 sm:px-10"
+      >
+        <a href="/" class="group inline-flex items-center gap-3">
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest text-sand shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
+          >
+            <span class="text-xl font-bold">W</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">
+              wallet - live
+            </p>
+            <p class="text-sm text-forest/70">Gestão clara de ativos</p>
+          </div>
+        </a>
+
+        <div class="hidden items-center gap-3 sm:flex">
+          <a
+            href="/assets"
+            class="rounded-full border border-forest/15 bg-white/70 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
+            >Carteira</a
+          >
+          <a
+            href="/logout"
+            class="rounded-full bg-clay px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#9a5e24]"
+            >Sair</a
+          >
+        </div>
+      </header>
+
       <main
-        class="relative mx-auto grid min-h-screen w-full max-w-7xl items-center gap-12 px-6 py-10 sm:px-10 lg:grid-cols-[1.05fr_0.95fr]"
+        class="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-6 py-10 sm:px-10 lg:grid-cols-[1.05fr_0.95fr]"
       >
         <section class="hidden lg:block">
           <a
@@ -196,6 +227,19 @@
           </div>
         </section>
       </main>
+
+      <footer
+        class="relative z-10 mx-auto mb-6 mt-2 flex w-full max-w-7xl items-center justify-between gap-3 border-t border-forest/10 px-6 pt-5 text-xs text-forest/70 sm:px-10"
+      >
+        <p>desenvolvido por loren ypsum 2026</p>
+        <a
+          href="https://github.com/lorenypsum"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-semibold text-forest transition hover:text-clay"
+          >github</a
+        >
+      </footer>
     </div>
   </body>
 </html>
