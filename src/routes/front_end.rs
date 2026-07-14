@@ -347,10 +347,18 @@ fn build_presets(quotes: &HashMap<String, BrapiQuote>) -> Vec<PresetAssetView> {
             PresetAssetView {
                 symbol: preset.symbol.to_string(),
                 name: quote
-                    .and_then(|item| item.short_name.clone().or_else(|| item.long_name.clone()))
+                    .and_then(|item| {
+                        item.data.as_ref().and_then(|data| {
+                            data.short_name.clone().or_else(|| data.long_name.clone())
+                        })
+                    })
                     .unwrap_or_else(|| preset.name.to_string()),
                 current_price: quote
-                    .and_then(|item| item.regular_market_price)
+                    .and_then(|item| {
+                        item.data
+                            .as_ref()
+                            .and_then(|data| data.regular_market_price)
+                    })
                     .unwrap_or(0.0),
             }
         })
@@ -366,7 +374,12 @@ fn build_portfolio(
         .map(|asset| {
             let current_price = quotes
                 .get(&asset.symbol)
-                .and_then(|quote| quote.regular_market_price)
+                .and_then(|quote| {
+                    quote
+                        .data
+                        .as_ref()
+                        .and_then(|data| data.regular_market_price)
+                })
                 .unwrap_or(asset.unit_value);
             let current_value = current_price * asset.quantity_owned;
             let result_value = (current_price - asset.bought_for) * asset.quantity_owned;

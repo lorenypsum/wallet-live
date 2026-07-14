@@ -55,9 +55,9 @@
 
           <div class="flex items-center gap-3 text-sm font-semibold">
             <a
-              href="/assets"
+              href="#cadastro-ativos"
               class="rounded-full border border-forest/15 bg-white/80 px-4 py-2 text-forest transition hover:bg-white"
-              >Atualizar preços</a
+              >Cadastrar ativos</a
             >
             <a
               href="/logout"
@@ -329,6 +329,7 @@
         </section>
 
         <section
+          id="cadastro-ativos"
           class="mt-8 rounded-4xl border border-white/70 bg-[#f7f3ea]/92 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur"
         >
           <div>
@@ -390,6 +391,14 @@
                 type="hidden"
                 value="{% if preset_assets.len() > 0 %}{{ preset_assets[0].name }}{% endif %}"
               />
+              <p
+                id="preset-current-price"
+                class="mt-2 text-sm font-semibold text-forest/70"
+              >
+                Preco BRAPI agora: {% if preset_assets.len() > 0 %}R$ {{
+                preset_assets[0].current_price }}{% else %}indisponivel{% endif
+                %}
+              </p>
             </div>
 
             <div>
@@ -480,6 +489,9 @@
       const assetNameInput = document.getElementById("asset_name");
       const boughtForInput = document.getElementById("bought_for");
       const currentPriceInput = document.getElementById("current_price");
+      const presetCurrentPrice = document.getElementById(
+        "preset-current-price",
+      );
       const boughtAtInput = document.getElementById("bought_at");
       const originalOptions = Array.from(assetSelect.options).map((option) => ({
         value: option.value,
@@ -488,17 +500,30 @@
         price: option.dataset.price,
       }));
 
+      function formatBrl(value) {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue) || numericValue <= 0) {
+          return "indisponivel";
+        }
+
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(numericValue);
+      }
+
       function setSelectedPreset(option) {
         if (!option) {
           return;
         }
+
+        const currentPrice = option.dataset.price || "";
         assetNameInput.value = option.dataset.name || option.value;
+        currentPriceInput.value = currentPrice;
         if (!boughtForInput.value || Number(boughtForInput.value) <= 0) {
-          boughtForInput.value = option.dataset.price || "";
+          boughtForInput.value = currentPrice;
         }
-        if (!currentPriceInput.value || Number(currentPriceInput.value) <= 0) {
-          currentPriceInput.value = option.dataset.price || "";
-        }
+        presetCurrentPrice.textContent = `Preco BRAPI agora: ${formatBrl(currentPrice)}`;
       }
 
       function rebuildOptions(searchTerm) {
@@ -532,6 +557,7 @@
         boughtForInput.value = selected.dataset.price || boughtForInput.value;
         currentPriceInput.value =
           selected.dataset.price || currentPriceInput.value;
+        presetCurrentPrice.textContent = `Preco BRAPI agora: ${formatBrl(selected.dataset.price)}`;
       });
 
       if (!boughtAtInput.value) {

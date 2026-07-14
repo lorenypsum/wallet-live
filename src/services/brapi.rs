@@ -10,12 +10,30 @@ pub struct PresetAsset {
 }
 
 pub const PRESET_ASSETS: [PresetAsset; 6] = [
-    PresetAsset { symbol: "ABEV3", name: "Ambev" },
-    PresetAsset { symbol: "PETR4", name: "Petrobras" },
-    PresetAsset { symbol: "VALE3", name: "Vale" },
-    PresetAsset { symbol: "ITUB4", name: "Itaú Unibanco" },
-    PresetAsset { symbol: "BBDC4", name: "Bradesco" },
-    PresetAsset { symbol: "BBAS3", name: "Banco do Brasil" },
+    PresetAsset {
+        symbol: "ABEV3",
+        name: "Ambev",
+    },
+    PresetAsset {
+        symbol: "PETR4",
+        name: "Petrobras",
+    },
+    PresetAsset {
+        symbol: "VALE3",
+        name: "Vale",
+    },
+    PresetAsset {
+        symbol: "ITUB4",
+        name: "Itaú Unibanco",
+    },
+    PresetAsset {
+        symbol: "BBDC4",
+        name: "Bradesco",
+    },
+    PresetAsset {
+        symbol: "BBAS3",
+        name: "Banco do Brasil",
+    },
 ];
 
 #[derive(Debug, Deserialize)]
@@ -26,6 +44,11 @@ struct QuoteResponse {
 #[derive(Debug, Deserialize, Clone)]
 pub struct BrapiQuote {
     pub symbol: String,
+    pub data: Option<BrapiQuoteData>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct BrapiQuoteData {
     #[serde(rename = "regularMarketPrice")]
     pub regular_market_price: Option<f64>,
     #[serde(rename = "shortName")]
