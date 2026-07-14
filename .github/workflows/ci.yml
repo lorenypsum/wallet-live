@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
 
     steps:
       - name: Checkout
@@ -20,7 +22,14 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
+      - name: Start database with Docker Compose
+        run: docker compose up -d --wait db
+
       - name: Run tests
         env:
           SQLX_OFFLINE: true
         run: cargo test
+
+      - name: Stop database
+        if: always()
+        run: docker compose down -v
