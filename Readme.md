@@ -60,9 +60,11 @@ http://localhost:3000
 ## Qual melhoria foi implementada
 
 Nesta versão, desenvolvi uma interface utilizando a inteligência do figma para
-criar uma melhor experiência de usuário e visual. Usei o modelo de exemplo para criar uma homepage, login, registro e dashboard que inclui a visualização da carteira atualizada, com ativos que podem ser cadastrados, editados e removidos.
+criar uma melhor experiência de usuário e visual. Usei o modelo de exemplo para pedir ao copilot para criar os htmls da homepage, login, registro e dashboard que inclui a visualização da carteira atualizada, com ativos que podem ser cadastrados, editados e removidos.
 
-Na parte de cadastro de ativos existem opções pré-selecionadas que foram buscadas na API de ativos, mas também é possível cadastrar ativos personalizados. O dashboard exibe métricas financeiras reais, como valor investido, valor atual, resultado líquido e percentual de retorno.
+Na parte de cadastro de ativos existem opções pré-selecionadas que foram buscadas na API de ativos da BRAPI, além de ser possível cadastrar ativos personalizados. O dashboard exibe métricas financeiras reais, como valor investido, valor atual, resultado líquido e percentual de retorno.
+
+O valor de ativos que foram cadastrados a partir das opções pré-selecionadas da BRAPI é atualizado automaticamente, enquanto os ativos personalizados permanecem com o valor definido no momento do cadastro.
  
  As principais melhorias incluem:
 
@@ -70,10 +72,12 @@ Na parte de cadastro de ativos existem opções pré-selecionadas que foram busc
 - Formulário para cadastrar investimento na carteira.
 - Formulário para editar investimento existente.
 - Formulários para cadastrar e editar ativos do catálogo.
+- Atualização automática do valor de ativos cadastrados a partir da BRAPI.
 - Cálculo do total investido, valor atual, resultado líquido e retorno percentual.
 - Validações para evitar quantidades e valores inválidos.
 - Mensagens de erro e sucesso no fluxo de login, registro e dashboard.
 - Testes novos para validações e edição de posição.
+- Validação de nome e senha de usuário no registro, com mensagens de feedback.
 
 ## Como testar sua versão
 
