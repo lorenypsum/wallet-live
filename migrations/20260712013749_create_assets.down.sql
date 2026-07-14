@@ -1,2 +1,2 @@
--- Add down migration script here
+-- Add down migration script for assets here
 DROP TABLE IF EXISTS assets;

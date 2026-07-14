@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-slate-950 text-slate-100">
+	<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+		<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+			<div>
+				<p class="text-sm font-medium uppercase tracking-[0.2em] text-cyan-400">Assets</p>
+				<h1 class="mt-2 text-3xl font-semibold text-white">Gerenciar ativos</h1>
+				<p class="mt-2 text-sm text-slate-400">Visão geral dos ativos cadastrados na carteira.</p>
+			</div>
+
+			<div class="flex flex-wrap gap-3">
+				<button class="inline-flex items-center justify-center rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:bg-slate-800">
+					Filtrar
+				</button>
+				<button class="inline-flex items-center justify-center rounded-xl bg-cyan-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-cyan-400">
+					Novo ativo
+				</button>
+			</div>
+		</div>
+
+		<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
+				<p class="text-sm text-slate-400">Total em carteira</p>
+				<p class="mt-3 text-2xl font-semibold text-white">R$ 128.450,00</p>
+				<p class="mt-2 text-sm text-emerald-400">+12,4% no mês</p>
+			</div>
+
+			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
+				<p class="text-sm text-slate-400">Ativos</p>
+				<p class="mt-3 text-2xl font-semibold text-white">24</p>
+				<p class="mt-2 text-sm text-slate-400">Em acompanhamento</p>
+			</div>
+
+			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
+				<p class="text-sm text-slate-400">Maior posição</p>
+				<p class="mt-3 text-2xl font-semibold text-white">BTC</p>
+				<p class="mt-2 text-sm text-amber-400">34,8% da carteira</p>
+			</div>
+
+			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
+				<p class="text-sm text-slate-400">Variação média</p>
+				<p class="mt-3 text-2xl font-semibold text-white">+8,7%</p>
+				<p class="mt-2 text-sm text-emerald-400">Últimos 30 dias</p>
+			</div>
+		</div>
+
+		<div class="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-lg shadow-black/20">
+			<div class="border-b border-slate-800 px-6 py-4">
+				<h2 class="text-lg font-semibold text-white">Lista de ativos</h2>
+			</div>
+
+			<div class="overflow-x-auto">
+				<table class="min-w-full divide-y divide-slate-800 text-left">
+					<thead class="bg-slate-950/40 text-xs uppercase tracking-wider text-slate-400">
+						<tr>
+							<th class="px-6 py-4 font-medium">Ativo</th>
+							<th class="px-6 py-4 font-medium">Quantidade</th>
+							<th class="px-6 py-4 font-medium">Preço médio</th>
+							<th class="px-6 py-4 font-medium">Valor atual</th>
+							<th class="px-6 py-4 font-medium">Resultado</th>
+							<th class="px-6 py-4 font-medium">Status</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-slate-800 text-sm text-slate-200">
+						<tr class="hover:bg-slate-800/40">
+							<td class="px-6 py-4 font-medium text-white">Bitcoin</td>
+							<td class="px-6 py-4">0,85</td>
+							<td class="px-6 py-4">R$ 215.000,00</td>
+							<td class="px-6 py-4">R$ 234.500,00</td>
+							<td class="px-6 py-4 text-emerald-400">+R$ 19.500,00</td>
+							<td class="px-6 py-4">
+								<span class="inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">Ativo</span>
+							</td>
+						</tr>
+						<tr class="hover:bg-slate-800/40">
+							<td class="px-6 py-4 font-medium text-white">Ethereum</td>
+							<td class="px-6 py-4">8,20</td>
+							<td class="px-6 py-4">R$ 11.400,00</td>
+							<td class="px-6 py-4">R$ 96.100,00</td>
+							<td class="px-6 py-4 text-emerald-400">+R$ 2.800,00</td>
+							<td class="px-6 py-4">
+								<span class="inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">Ativo</span>
+							</td>
+						</tr>
+						<tr class="hover:bg-slate-800/40">
+							<td class="px-6 py-4 font-medium text-white">USD Coin</td>
+							<td class="px-6 py-4">12.500</td>
+							<td class="px-6 py-4">R$ 5,12</td>
+							<td class="px-6 py-4">R$ 64.000,00</td>
+							<td class="px-6 py-4 text-slate-400">R$ 0,00</td>
+							<td class="px-6 py-4">
+								<span class="inline-flex rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">Estável</span>
+							</td>
+						</tr>
+						<tr class="hover:bg-slate-800/40">
+							<td class="px-6 py-4 font-medium text-white">Solana</td>
+							<td class="px-6 py-4">120</td>
+							<td class="px-6 py-4">R$ 780,00</td>
+							<td class="px-6 py-4">R$ 72.600,00</td>
+							<td class="px-6 py-4 text-rose-400">-R$ 4.200,00</td>
+							<td class="px-6 py-4">
+								<span class="inline-flex rounded-full bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-400">Atenção</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

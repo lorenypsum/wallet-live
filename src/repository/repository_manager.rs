@@ -3,7 +3,7 @@ use axum::extract::FromRequestParts;
 use sqlx::PgPool;
 
 use crate::{
-    app::AppState, models::{Asset, UserRecord},
+    app::AppState, models::{Asset, OwnedAsset, UserRecord},
 };
 
 pub struct Repository {
@@ -67,7 +67,71 @@ impl Repository {
         .fetch_optional(&self.db)
         .await
     }
+
+    pub async fn list_owned_assets(&self, user_id: i64) -> sqlx::Result<Vec<OwnedAsset>> {
+        sqlx::query_as!(
+            OwnedAsset,
+            r#"
+            SELECT 
+                a.id, 
+                a.name, 
+                a.unit_value, 
+                SUM((a.unit_value - o.bought_for) * o.quantity_owned) AS "value_delta!", 
+                SUM(o.quantity_owned) AS "quantity_owned!", 
+                JSON_AGG(
+                JSON_BUILD_OBJECT(
+                    'bought_at', o.timestamp, 
+                    'bought_for', o.bought_for, 
+                    'quantity_bought', o.quantity_owned, 
+                    'value_delta', (a.unit_value - o.bought_for) * o.quantity_owned
+        )
+        ) AS "purchased_history!: _"
+         FROM assets AS a
+         JOIN owned_assets AS o 
+         ON o.asset_id = a.id
+         WHERE o.user_id = $1
+         GROUP BY a.id;
+         "#,
+            user_id
+        ).fetch_all(&self.db)
+        .await
+    }
+    
+    pub async fn insert_owned_asset(
+        &self,
+        user_id: i64,
+        asset_id: i64,
+        quantity_owned: f64,
+        bought_for: f64,
+    ) -> sqlx::Result<()> {
+        sqlx::query!(
+            r#"
+            INSERT INTO owned_assets (user_id, asset_id, bought_for, quantity_owned)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (user_id, asset_id)
+            DO UPDATE SET
+                quantity_owned = owned_assets.quantity_owned + EXCLUDED.quantity_owned,
+                bought_for = (
+                    (owned_assets.bought_for * owned_assets.quantity_owned)
+                    + (EXCLUDED.bought_for * EXCLUDED.quantity_owned)
+                ) / (owned_assets.quantity_owned + EXCLUDED.quantity_owned),
+                timestamp = NOW()
+            "#,
+            user_id,
+            asset_id,
+            bought_for,
+            quantity_owned
+        )
+        .execute(&self.db)
+        .await?;
+
+        Ok(())
+    }
+
 }
+
+
+
 
 impl FromRequestParts<AppState> for Repository {
     type Rejection = Infallible;
