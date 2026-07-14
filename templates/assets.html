@@ -38,7 +38,7 @@
       ></div>
 
       <header
-        class="relative z-10 border-b border-forest/10 bg-white/60 backdrop-blur"
+        class="relative z-10 border-b border-forest/10 bg-forest/100 backdrop-blur"
       >
         <div
           class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-5 sm:px-10"
@@ -46,22 +46,23 @@
           <div>
             <a href="/" class="group inline-flex items-center gap-3">
               <div
-                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest text-sand shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
+                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sand text-forest shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
               >
                 <span class="text-xl font-bold">W</span>
               </div>
               <div>
                 <p
-                  class="text-xs font-bold uppercase tracking-[0.25em] text-moss"
+                  class="text-xs font-bold uppercase tracking-[0.25em] text-white"
                 >
                   wallet - live
                 </p>
-                <p class="text-sm text-forest/70">Gestão de ativos</p>
+                <p class="text-sm text-white/70">Gestão de ativos</p>
               </div>
             </a>
-            <h1 class="mt-2 font-display text-4xl text-forest">Sua carteira</h1>
-            <p class="mt-1 text-sm text-forest/70">
-              {{ username | capitalize }}, confira seus ativos e resultados com preços atualizados dinamicamente.
+            <h1 class="mt-2 font-display text-4xl text-white">Sua carteira</h1>
+            <p class="mt-1 text-sm text-white/70">
+              {{ username | capitalize }}, confira seus ativos e resultados com
+              preços atualizados dinamicamente.
             </p>
           </div>
 
@@ -101,7 +102,7 @@
         {% endif %}
 
         <section
-          class="rounded-4xl border border-white/70 bg-[#f7f3ea]/92 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur"
+          class="rounded-4xl border border-white/70 bg-[forest]/92 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur"
         >
           <div
             class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"
@@ -116,8 +117,8 @@
                 Carteira atualizada
               </h2>
               <p class="mt-2 text-sm leading-relaxed text-forest/70">
-                O resultado compara o preço de
-                compra com a cotação mais recente.
+                O resultado compara o preço de compra com a cotação mais
+                recente.
               </p>
             </div>
           </div>
