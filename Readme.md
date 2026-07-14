@@ -59,7 +59,12 @@ http://localhost:3000
 
 ## Qual melhoria foi implementada
 
-Nesta versão, a aplicação foi aproximada do front-end de referência e ganhou um fluxo funcional completo:
+Nesta versão, desenvolvi uma interface utilizando a inteligência do figma para
+criar uma melhor experiência de usuário e visual. Usei o modelo de exemplo para criar uma homepage, login, registro e dashboard que inclui a visualização da carteira atualizada, com ativos que podem ser cadastrados, editados e removidos.
+
+Na parte de cadastro de ativos existem opções pré-selecionadas que foram buscadas na API de ativos, mas também é possível cadastrar ativos personalizados. O dashboard exibe métricas financeiras reais, como valor investido, valor atual, resultado líquido e percentual de retorno.
+ 
+ As principais melhorias incluem:
 
 - Dashboard redesenhado com métricas financeiras reais.
 - Formulário para cadastrar investimento na carteira.
