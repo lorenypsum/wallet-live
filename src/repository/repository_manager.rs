@@ -76,11 +76,12 @@ impl Repository {
                 a.id, 
                 a.name, 
                 a.unit_value, 
+                MAX(o.bought_for) AS "bought_for!",
                 SUM((a.unit_value - o.bought_for) * o.quantity_owned) AS "value_delta!", 
                 SUM(o.quantity_owned) AS "quantity_owned!", 
                 JSON_AGG(
                 JSON_BUILD_OBJECT(
-                    'bought_at', o.timestamp, 
+                    'bought_at', o.timestamp::text, 
                     'bought_for', o.bought_for, 
                     'quantity_bought', o.quantity_owned, 
                     'value_delta', (a.unit_value - o.bought_for) * o.quantity_owned
@@ -128,6 +129,32 @@ impl Repository {
         Ok(())
     }
 
+    pub async fn update_owned_asset(
+        &self,
+        user_id: i64,
+        asset_id: i64,
+        quantity_owned: f64,
+        bought_for: f64,
+    ) -> sqlx::Result<bool> {
+        let result = sqlx::query!(
+            r#"
+            UPDATE owned_assets
+            SET quantity_owned = $3,
+                bought_for = $4,
+                timestamp = NOW()
+            WHERE user_id = $1 AND asset_id = $2
+            "#,
+            user_id,
+            asset_id,
+            quantity_owned,
+            bought_for
+        )
+        .execute(&self.db)
+        .await?;
+
+        Ok(result.rows_affected() > 0)
+    }
+
 }
 
 
@@ -157,6 +184,7 @@ impl From<PgPool> for Repository {
 mod tests {
 
     use axum::Json;
+    use crate::repository::repository_manager::Repository;
     use sqlx::PgPool;
     use crate::{auth::admin::Admin, routes::api::{UpdateAssetRequest, list_assets, update_asset}};
     use crate::routes::api::CreateAssetRequest;
@@ -206,5 +234,41 @@ mod tests {
         // cargo insta review --accept
         insta::assert_json_snapshot!(updated_asset);
         
+    }
+
+    #[sqlx::test(fixtures("bitcoin_asset"))]
+    async fn test_update_owned_asset(db: PgPool) {
+        let user_id: i64 = sqlx::query_scalar(
+            r#"
+            INSERT INTO users (username, password_hash)
+            VALUES ('alice', 'password_hash')
+            RETURNING id
+            "#,
+        )
+        .fetch_one(&db)
+        .await
+        .expect("user inserted");
+
+        let repository = Repository::from(db.clone());
+        repository
+            .insert_owned_asset(user_id, 1, 2.0, 100.0)
+            .await
+            .expect("investment inserted");
+
+        let updated = repository
+            .update_owned_asset(user_id, 1, 3.5, 125.0)
+            .await
+            .expect("update succeeds");
+
+        assert!(updated);
+
+        let positions = repository
+            .list_owned_assets(user_id)
+            .await
+            .expect("positions listed");
+
+        assert_eq!(positions.len(), 1);
+        assert_eq!(positions[0].quantity_owned, 3.5);
+        assert_eq!(positions[0].bought_for, 125.0);
     }
 }

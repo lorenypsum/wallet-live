@@ -104,6 +104,14 @@
               </p>
             </div>
 
+            {% if error.is_some() %}
+            <div
+              class="mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700"
+            >
+              {{ error.as_ref().unwrap() }}
+            </div>
+            {% endif %}
+
             <form action="/register" method="post" class="space-y-5">
               <div>
                 <label

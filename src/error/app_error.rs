@@ -1,6 +1,6 @@
 use axum::{Json, http::StatusCode, response::IntoResponse};
-use thiserror::Error;
 use serde::Serialize;
+use thiserror::Error;
 
 #[derive(Debug, Error)]
 //TODO: censurar erros relevantes para não vazar informações sensíveis, como erros de banco de dados
@@ -19,6 +19,8 @@ pub enum AppError {
     #[error("User does not exist.")]
     //TODO: chamar esse erro no lugar certo
     UserNotFound,
+    #[error("{0}")]
+    Validation(String),
     #[error(transparent)]
     TemplateError(#[from] askama::Error),
     #[error(transparent)]
@@ -32,7 +34,7 @@ pub struct ErrorResponse {
 
 impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
-        let error_response =  ErrorResponse {
+        let error_response = ErrorResponse {
             error: self.to_string(),
         };
 
@@ -40,6 +42,7 @@ impl IntoResponse for AppError {
             AppError::MissingAuthorization => StatusCode::BAD_REQUEST,
             AppError::InvalidCredentials => StatusCode::UNAUTHORIZED,
             AppError::AssetNotFound | AppError::UserNotFound => StatusCode::NOT_FOUND,
+            AppError::Validation(_) => StatusCode::BAD_REQUEST,
             AppError::Database(_) | AppError::TemplateError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::UsernameTaken => StatusCode::CONFLICT,
             AppError::JwtError(_) => StatusCode::INTERNAL_SERVER_ERROR,
@@ -48,4 +51,3 @@ impl IntoResponse for AppError {
         (status, Json(error_response)).into_response()
     }
 }
-
