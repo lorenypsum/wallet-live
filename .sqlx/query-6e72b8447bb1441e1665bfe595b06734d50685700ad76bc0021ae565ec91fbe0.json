@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO owned_assets (user_id, asset_id, bought_for, quantity_owned, timestamp)\n            VALUES ($1, $2, $3, $4, $5::timestamp)\n            ON CONFLICT (user_id, asset_id)\n            DO UPDATE SET\n                quantity_owned = owned_assets.quantity_owned + EXCLUDED.quantity_owned,\n                bought_for = (\n                    (owned_assets.bought_for * owned_assets.quantity_owned)\n                    + (EXCLUDED.bought_for * EXCLUDED.quantity_owned)\n                ) / (owned_assets.quantity_owned + EXCLUDED.quantity_owned),\n                timestamp = EXCLUDED.timestamp\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Float8",
+        "Float8",
+        "Timestamp"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6e72b8447bb1441e1665bfe595b06734d50685700ad76bc0021ae565ec91fbe0"
+}

@@ -21,4 +21,6 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Run tests
+        env:
+          SQLX_OFFLINE: true
         run: cargo test

@@ -1,0 +1,70 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT \n                a.id, \n                a.name, \n                a.symbol,\n                a.unit_value, \n                MAX(o.bought_for) AS \"bought_for!\",\n                SUM((a.unit_value - o.bought_for) * o.quantity_owned) AS \"value_delta!\", \n                SUM(o.quantity_owned) AS \"quantity_owned!\", \n                MAX(o.timestamp)::text AS \"last_bought_at!\",\n                JSON_AGG(\n                JSON_BUILD_OBJECT(\n                    'bought_at', o.timestamp::text, \n                    'bought_for', o.bought_for, \n                    'quantity_bought', o.quantity_owned, \n                    'value_delta', (a.unit_value - o.bought_for) * o.quantity_owned\n        )\n        ) AS \"purchased_history!: _\"\n         FROM assets AS a\n         JOIN owned_assets AS o \n         ON o.asset_id = a.id\n         WHERE o.user_id = $1\n         GROUP BY a.id;\n         ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "symbol",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "unit_value",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "bought_for!",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 5,
+        "name": "value_delta!",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 6,
+        "name": "quantity_owned!",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 7,
+        "name": "last_bought_at!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "purchased_history!: _",
+        "type_info": "Json"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "a42a9d8612b473d04424aec62b0f61a41bd17b1f8adcbf2e46aaafa5d7669ab2"
+}

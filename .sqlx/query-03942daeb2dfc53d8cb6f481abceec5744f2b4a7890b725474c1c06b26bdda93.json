@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE owned_assets\n            SET quantity_owned = $3,\n                bought_for = $4,\n                timestamp = $5::timestamp\n            WHERE user_id = $1 AND asset_id = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Float8",
+        "Float8",
+        "Timestamp"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "03942daeb2dfc53d8cb6f481abceec5744f2b4a7890b725474c1c06b26bdda93"
+}
