@@ -1,6 +1,6 @@
 # Wallet Live
 
-Wallet Live é uma aplicacao web em Rust para gestão de carteira de investimentos, facilita a atualização de preços dinamicamente via BRAPI e apresenta métricas da carteira.
+Wallet Live é uma aplicação web em Rust para gestão de carteira de investimentos, facilita a atualização de preços dinamicamente via BRAPI e apresenta métricas da carteira.
 
 ## Producao
 
@@ -9,14 +9,14 @@ Wallet Live é uma aplicacao web em Rust para gestão de carteira de investiment
 ## Funcionalidades
 
 - Login, registro e logout.
-- Edicao de perfil (username e senha).
-- Dashboard com metricas da carteira.
-- Cadastro, edicao e exclusao de posicoes da carteira.
-- Atualizacao de preco de ativos selecionados via BRAPI.
+- Edição de perfil (username e senha).
+- Dashboard com métricas da carteira.
+- Cadastro, edição e exclusão de posições da carteira.
+- Atualização de preço de ativos selecionados via BRAPI.
 
 ## Como rodar localmente
 
-### Pre-requisitos
+### Pré-requisitos
 
 - Rust toolchain instalado.
 - Docker e Docker Compose instalados.
@@ -40,9 +40,9 @@ O PostgreSQL local sobe com:
 - senha: `postgres`
 - database: `postgres`
 
-### 2) Configurar variaveis de ambiente
+### 2) Configurar variáveis de ambiente
 
-Crie um arquivo `.env` na raiz:
+Crie um arquivo `.env` na raíz:
 
 ```env
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
@@ -52,9 +52,9 @@ DB_MAX_CONNECTIONS=5
 
 Notas:
 
-- `DATABASE_URL` e obrigatoria.
-- `BRAPI_TOKEN` e opcional (ha fallback de desenvolvimento no codigo).
-- `DB_MAX_CONNECTIONS` e opcional (padrao: `5`).
+- `DATABASE_URL` é obrigatória.
+- `BRAPI_TOKEN` é opcional (há fallback de desenvolvimento no código).
+- `DB_MAX_CONNECTIONS` é opcional (padrão: `5`).
 
 ### 3) Rodar migrations
 
@@ -62,13 +62,13 @@ Notas:
 cargo sqlx migrate run
 ```
 
-### 4) Iniciar a aplicacao
+### 4) Iniciar a aplicação
 
 ```bash
 cargo run
 ```
 
-Aplicacao local:
+Aplicação local:
 
 - http://localhost:3000
 
@@ -80,26 +80,26 @@ cargo test
 
 ## Deploy no Render
 
-Este repositorio ja esta preparado para deploy com Docker no Render.
+Este repositório já está preparado para deploy com Docker no Render.
 
-### O que ja existe no projeto
+### O que já existe no projeto
 
 - `Dockerfile` para build e runtime.
 - `.github/workflows/ci.yml` para testes automatizados.
-- `.github/workflows/deploy-render.yml` para disparar deploy via Deploy Hook apos CI verde na branch `master`.
+- `.github/workflows/deploy-render.yml` para disparar deploy via Deploy Hook após CI verde na branch `master`.
 
 ### Passo a passo
 
 1. Crie um Postgres (Render ou provedor externo).
-2. Crie um Web Service no Render conectado a este repositorio.
+2. Crie um Web Service no Render conectado a este repositório.
 3. Escolha runtime Docker (o Render detecta o `Dockerfile`).
-4. Configure as variaveis de ambiente no Web Service:
-   - `DATABASE_URL` (obrigatoria)
+4. Configure as variáveis de ambiente no Web Service:
+   - `DATABASE_URL` (obrigatória)
    - `BRAPI_TOKEN` (recomendada) obtida em [BRAPI](https://brapi.dev)
    - `DB_MAX_CONNECTIONS` (opcional, recomendado iniciar com `5`)
-5. Em Settings do servico, copie o `Deploy Hook`.
+5. Em Settings do serviço, copie o `Deploy Hook`.
 
-### Deploy automatico via GitHub Actions
+### Deploy automático via GitHub Actions
 
 1. No GitHub: Settings > Secrets and variables > Actions.
 2. Crie o secret `RENDER_DEPLOY_HOOK_URL` com o valor do hook do Render.
