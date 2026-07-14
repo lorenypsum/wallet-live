@@ -1,93 +1,116 @@
 # Wallet Live
 
-Wallet Live é uma aplicação web em Rust para autenticação de usuários e gestão de investimentos. A interface permite login, cadastro, edição de perfil, visualização da carteira e atualização de posições com cotações da BRAPI.
+Wallet Live e uma aplicacao web em Rust para autenticacao de usuarios e gestao de investimentos.
+
+## Producao
+
+- URL: https://wallet-live.onrender.com/
 
 ## Funcionalidades
 
 - Login, registro e logout.
-- Edição de perfil (username e senha).
-- Dashboard com métricas da carteira.
-- Cadastro, edição e exclusão de posições da carteira.
-- Atualização de preço de ativos selecionados via BRAPI.
+- Edicao de perfil (username e senha).
+- Dashboard com metricas da carteira.
+- Cadastro, edicao e exclusao de posicoes da carteira.
+- Atualizacao de preco de ativos selecionados via BRAPI.
 
-## Executar localmente
+## Como rodar localmente
 
-1. Suba o PostgreSQL local com Docker Compose:
+### Pre-requisitos
 
-```bash
-docker compose up -d
-```
-
-1. Configure as variáveis de ambiente no arquivo .env:
-
-```env
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
-BRAPI_TOKEN=seu_token_brapi
-```
-
-Se BRAPI_TOKEN não for informado, a aplicação usa um valor padrão de desenvolvimento.
-
-1. Instale SQLx CLI se ainda não tiver:
+- Rust toolchain instalado.
+- Docker e Docker Compose instalados.
+- SQLx CLI instalado:
 
 ```bash
 cargo install sqlx-cli --no-default-features --features rustls,postgres
 ```
 
-1. Rode as migrations:
+### 1) Subir o banco local
+
+```bash
+docker compose up -d
+```
+
+O PostgreSQL local sobe com:
+
+- host: `localhost`
+- porta: `5432`
+- usuario: `postgres`
+- senha: `postgres`
+- database: `postgres`
+
+### 2) Configurar variaveis de ambiente
+
+Crie um arquivo `.env` na raiz:
+
+```env
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+BRAPI_TOKEN=seu_token_brapi
+DB_MAX_CONNECTIONS=5
+```
+
+Notas:
+
+- `DATABASE_URL` e obrigatoria.
+- `BRAPI_TOKEN` e opcional (ha fallback de desenvolvimento no codigo).
+- `DB_MAX_CONNECTIONS` e opcional (padrao: `5`).
+
+### 3) Rodar migrations
 
 ```bash
 cargo sqlx migrate run
 ```
 
-1. Inicie o app:
+### 4) Iniciar a aplicacao
 
 ```bash
 cargo run
 ```
 
-1. Acesse:
+Aplicacao local:
 
-[http://localhost:3000](http://localhost:3000)
+- http://localhost:3000
 
-## Testes
+### 5) Testes
 
 ```bash
 cargo test
 ```
 
-## Deploy em produção (Render)
+## Deploy no Render
 
-Este repositório já inclui:
+Este repositorio ja esta preparado para deploy com Docker no Render.
 
-- Dockerfile para build e execução da aplicação.
-- Workflow de CI no GitHub Actions.
-- Workflow de deploy automático para Render após CI verde na branch master.
+### O que ja existe no projeto
 
-### Passo a passo no Render
+- `Dockerfile` para build e runtime.
+- `.github/workflows/ci.yml` para testes automatizados.
+- `.github/workflows/deploy-render.yml` para disparar deploy via Deploy Hook apos CI verde na branch `master`.
 
-1. Crie um Web Service no Render conectando este repositório.
-2. Selecione Docker como runtime (o Render detecta o Dockerfile).
-3. Configure as variáveis de ambiente no serviço:
-   - DATABASE_URL
-   - BRAPI_TOKEN
-4. Configure um banco PostgreSQL (Render Postgres, Neon, Supabase etc.) e use a URL em DATABASE_URL.
-5. Em Settings do serviço Render, copie o Deploy Hook URL.
+### Passo a passo
 
-### Configurar deploy automático pelo GitHub Actions
+1. Crie um Postgres (Render ou provedor externo).
+2. Crie um Web Service no Render conectado a este repositorio.
+3. Escolha runtime Docker (o Render detecta o `Dockerfile`).
+4. Configure as variaveis de ambiente no Web Service:
+   - `DATABASE_URL` (obrigatoria)
+   - `BRAPI_TOKEN` (recomendada)
+   - `DB_MAX_CONNECTIONS` (opcional, recomendado iniciar com `5`)
+5. Em Settings do servico, copie o `Deploy Hook`.
 
-1. No GitHub do repositório, abra Settings > Secrets and variables > Actions.
-2. Crie o secret:
-   - RENDER_DEPLOY_HOOK_URL
-3. A cada push em master:
-   - CI roda testes.
-   - Se CI passar, o workflow de deploy chama o hook do Render.
+### Deploy automatico via GitHub Actions
 
-## Workflows disponíveis
+1. No GitHub: Settings > Secrets and variables > Actions.
+2. Crie o secret `RENDER_DEPLOY_HOOK_URL` com o valor do hook do Render.
+3. Fluxo de deploy:
+   - Push/PR roda CI (`cargo test`).
+   - Quando CI em `master` conclui com sucesso, o workflow de deploy chama o hook do Render.
 
-- .github/workflows/ci.yml
-  - Executa cargo test em push e pull request.
-- .github/workflows/deploy-render.yml
-  - Dispara deploy no Render quando o workflow CI conclui com sucesso na master.
+## Workflows
+
+- `.github/workflows/ci.yml`: executa `cargo test` com `SQLX_OFFLINE=true`.
+- `.github/workflows/deploy-render.yml`: faz `POST` no Deploy Hook do Render quando a CI da `master` passa.
 
 ## Tecnologias
 
