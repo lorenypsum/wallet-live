@@ -38,33 +38,39 @@
       ></div>
 
       <header
-        class="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 sm:px-10"
+        class="relative z-10 border-b border-forest/10 bg-forest/100 backdrop-blur"
       >
-        <a href="/" class="group inline-flex items-center gap-3">
-          <div
-            class="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest text-sand shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
-          >
-            <span class="text-xl font-bold">W</span>
-          </div>
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">
-              wallet - live
-            </p>
-            <p class="text-sm text-forest/70">Gestão de ativos</p>
-          </div>
-        </a>
+        <div
+          class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-5 sm:px-10"
+        >
+          <a href="/" class="group inline-flex items-center gap-3">
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sand text-forest shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
+            >
+              <span class="text-xl font-bold">W</span>
+            </div>
+            <div>
+              <p
+                class="text-xs font-bold uppercase tracking-[0.25em] text-white"
+              >
+                wallet - live
+              </p>
+              <p class="text-sm text-white/70">Gestão de ativos</p>
+            </div>
+          </a>
 
-        <div class="flex items-center gap-2 sm:gap-3">
-          <a
-            href="/"
-            class="rounded-full border border-forest/15 bg-white/70 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
-            >Home</a
-          >
-          <a
-            href="/login"
-            class="rounded-full bg-clay px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#9a5e24]"
-            >Login</a
-          >
+          <div class="flex items-center gap-2 sm:gap-3">
+            <a
+              href="/"
+              class="rounded-full border border-forest/15 bg-white/80 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
+              >Home</a
+            >
+            <a
+              href="/login"
+              class="rounded-full bg-clay px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#9a5e24]"
+              >Login</a
+            >
+          </div>
         </div>
       </header>
 
@@ -72,7 +78,6 @@
         class="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-6 py-10 sm:px-10 lg:grid-cols-[1.05fr_0.95fr]"
       >
         <section class="hidden lg:block">
-
           <h1
             class="mt-8 max-w-xl font-display text-6xl leading-[0.95] text-forest xl:text-7xl"
           >
@@ -196,7 +201,7 @@
         </section>
       </main>
 
-     {% include "partials/footer.html" %}
+      {% include "partials/footer.html" %}
     </div>
   </body>
 </html>
