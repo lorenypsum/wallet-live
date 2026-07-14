@@ -43,7 +43,7 @@ impl App {
 
         tracing_subscriber::registry().with(layer).init();
 
-        dotenvy::dotenv()?;
+        let _ = dotenvy::dotenv();
         let state = AppState::new().await?;
 
         let listener = TcpListener::bind("0.0.0.0:3000").await?;
