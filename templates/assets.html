@@ -1,109 +1,355 @@
-<div class="min-h-screen bg-slate-950 text-slate-100">
-	<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-		<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-			<div>
-				<p class="text-sm font-medium uppercase tracking-[0.2em] text-cyan-400">Assets</p>
-				<h1 class="mt-2 text-3xl font-semibold text-white">Gerenciar ativos</h1>
-				<p class="mt-2 text-sm text-slate-400">Visão geral dos ativos cadastrados na carteira.</p>
-			</div>
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assets | Wallet Live</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Nunito+Sans:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Nunito Sans", "sans-serif"],
+              display: ["DM Serif Display", "serif"],
+            },
+            colors: {
+              forest: "#1e3a1a",
+              moss: "#5f7a58",
+              sand: "#ebe5d5",
+              clay: "#b5712e",
+              ink: "#0f172a",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-sand font-sans text-ink">
+    <div class="relative isolate min-h-screen overflow-hidden">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(181,113,46,0.14),transparent_30%),radial-gradient(circle_at_20%_20%,rgba(95,122,88,0.18),transparent_25%),linear-gradient(180deg,#f2ecde_0%,#ebe5d5_38%,#e5ddca_100%)]"
+      ></div>
 
-			<div class="flex flex-wrap gap-3">
-				<button class="inline-flex items-center justify-center rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:bg-slate-800">
-					Filtrar
-				</button>
-				<button class="inline-flex items-center justify-center rounded-xl bg-cyan-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-cyan-400">
-					Novo ativo
-				</button>
-			</div>
-		</div>
+      <header
+        class="relative z-10 border-b border-forest/10 bg-white/50 backdrop-blur"
+      >
+        <div
+          class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-5 sm:px-10"
+        >
+          <a href="/" class="group inline-flex items-center gap-3">
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest text-sand shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
+            >
+              <span class="text-xl font-bold">W</span>
+            </div>
+            <div>
+              <p
+                class="text-xs font-bold uppercase tracking-[0.25em] text-moss"
+              >
+                Wallet Live
+              </p>
+              <p class="text-sm text-forest/70">Dashboard de assets</p>
+            </div>
+          </a>
 
-		<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
-				<p class="text-sm text-slate-400">Total em carteira</p>
-				<p class="mt-3 text-2xl font-semibold text-white">R$ 128.450,00</p>
-				<p class="mt-2 text-sm text-emerald-400">+12,4% no mês</p>
-			</div>
+          <div class="flex flex-wrap items-center gap-3 text-sm font-semibold">
+            <a
+              href="/"
+              class="rounded-full border border-forest/15 bg-white/75 px-4 py-2 text-forest transition hover:bg-white"
+              >Home</a
+            >
+            <a
+              href="/logout"
+              class="rounded-full bg-clay px-4 py-2 text-white transition hover:bg-[#9a5e24]"
+              >Sair</a
+            >
+          </div>
+        </div>
+      </header>
 
-			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
-				<p class="text-sm text-slate-400">Ativos</p>
-				<p class="mt-3 text-2xl font-semibold text-white">24</p>
-				<p class="mt-2 text-sm text-slate-400">Em acompanhamento</p>
-			</div>
+      <main class="relative z-10 mx-auto max-w-7xl px-6 py-8 sm:px-10">
+        <div
+          class="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
+        >
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">
+              Assets
+            </p>
+            <h1 class="mt-3 font-display text-5xl text-forest">
+              Gerencie seu portfólio
+            </h1>
+            <p class="mt-4 max-w-2xl text-base leading-relaxed text-forest/75">
+              Olá, {{ username }}. Aqui você acompanha posições, cadastra novos
+              ativos e revisa o resultado da carteira.
+            </p>
+          </div>
 
-			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
-				<p class="text-sm text-slate-400">Maior posição</p>
-				<p class="mt-3 text-2xl font-semibold text-white">BTC</p>
-				<p class="mt-2 text-sm text-amber-400">34,8% da carteira</p>
-			</div>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="/logout"
+              class="inline-flex items-center justify-center rounded-full border border-forest/15 bg-white/80 px-5 py-2.5 text-sm font-bold text-forest transition hover:bg-white"
+              >Deslogar</a
+            >
+            <button
+              class="inline-flex items-center justify-center rounded-full bg-forest px-5 py-2.5 text-sm font-bold text-sand transition hover:bg-[#183013]"
+            >
+              Atualizar
+            </button>
+          </div>
+        </div>
 
-			<div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg shadow-black/20">
-				<p class="text-sm text-slate-400">Variação média</p>
-				<p class="mt-3 text-2xl font-semibold text-white">+8,7%</p>
-				<p class="mt-2 text-sm text-emerald-400">Últimos 30 dias</p>
-			</div>
-		</div>
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div
+            class="rounded-[1.75rem] border border-white/70 bg-[#f7f3ea]/90 p-6 shadow-sm backdrop-blur"
+          >
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-moss">
+              Posições
+            </p>
+            <p class="mt-4 text-4xl font-display text-forest">
+              {{ total_positions }}
+            </p>
+            <p class="mt-2 text-sm text-forest/70">
+              Ativos já cadastrados na carteira.
+            </p>
+          </div>
 
-		<div class="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-lg shadow-black/20">
-			<div class="border-b border-slate-800 px-6 py-4">
-				<h2 class="text-lg font-semibold text-white">Lista de ativos</h2>
-			</div>
+          <div
+            class="rounded-[1.75rem] border border-white/70 bg-[#f7f3ea]/90 p-6 shadow-sm backdrop-blur"
+          >
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-moss">
+              Valor atual
+            </p>
+            <p class="mt-4 text-4xl font-display text-forest">
+              {{ total_current_value | brl }}
+            </p>
+            <p class="mt-2 text-sm text-forest/70">
+              Somatório do valor de mercado das posições.
+            </p>
+          </div>
 
-			<div class="overflow-x-auto">
-				<table class="min-w-full divide-y divide-slate-800 text-left">
-					<thead class="bg-slate-950/40 text-xs uppercase tracking-wider text-slate-400">
-						<tr>
-							<th class="px-6 py-4 font-medium">Ativo</th>
-							<th class="px-6 py-4 font-medium">Quantidade</th>
-							<th class="px-6 py-4 font-medium">Preço médio</th>
-							<th class="px-6 py-4 font-medium">Valor atual</th>
-							<th class="px-6 py-4 font-medium">Resultado</th>
-							<th class="px-6 py-4 font-medium">Status</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-slate-800 text-sm text-slate-200">
-						<tr class="hover:bg-slate-800/40">
-							<td class="px-6 py-4 font-medium text-white">Bitcoin</td>
-							<td class="px-6 py-4">0,85</td>
-							<td class="px-6 py-4">R$ 215.000,00</td>
-							<td class="px-6 py-4">R$ 234.500,00</td>
-							<td class="px-6 py-4 text-emerald-400">+R$ 19.500,00</td>
-							<td class="px-6 py-4">
-								<span class="inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">Ativo</span>
-							</td>
-						</tr>
-						<tr class="hover:bg-slate-800/40">
-							<td class="px-6 py-4 font-medium text-white">Ethereum</td>
-							<td class="px-6 py-4">8,20</td>
-							<td class="px-6 py-4">R$ 11.400,00</td>
-							<td class="px-6 py-4">R$ 96.100,00</td>
-							<td class="px-6 py-4 text-emerald-400">+R$ 2.800,00</td>
-							<td class="px-6 py-4">
-								<span class="inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">Ativo</span>
-							</td>
-						</tr>
-						<tr class="hover:bg-slate-800/40">
-							<td class="px-6 py-4 font-medium text-white">USD Coin</td>
-							<td class="px-6 py-4">12.500</td>
-							<td class="px-6 py-4">R$ 5,12</td>
-							<td class="px-6 py-4">R$ 64.000,00</td>
-							<td class="px-6 py-4 text-slate-400">R$ 0,00</td>
-							<td class="px-6 py-4">
-								<span class="inline-flex rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">Estável</span>
-							</td>
-						</tr>
-						<tr class="hover:bg-slate-800/40">
-							<td class="px-6 py-4 font-medium text-white">Solana</td>
-							<td class="px-6 py-4">120</td>
-							<td class="px-6 py-4">R$ 780,00</td>
-							<td class="px-6 py-4">R$ 72.600,00</td>
-							<td class="px-6 py-4 text-rose-400">-R$ 4.200,00</td>
-							<td class="px-6 py-4">
-								<span class="inline-flex rounded-full bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-400">Atenção</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-</div>
+          <div
+            class="rounded-[1.75rem] border border-white/70 bg-[#f7f3ea]/90 p-6 shadow-sm backdrop-blur"
+          >
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-moss">
+              Resultado
+            </p>
+            <p class="mt-4 text-4xl font-display text-forest">
+              {{ total_delta | brl }}
+            </p>
+            <p class="mt-2 text-sm text-forest/70">
+              Acumulado de ganhos e perdas.
+            </p>
+          </div>
+
+          <div
+            class="rounded-[1.75rem] border border-white/70 bg-[#f7f3ea]/90 p-6 shadow-sm backdrop-blur"
+          >
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-moss">
+              Disponíveis
+            </p>
+            <p class="mt-4 text-4xl font-display text-forest">
+              {{ available_assets.len() }}
+            </p>
+            <p class="mt-2 text-sm text-forest/70">
+              Ativos que podem entrar na carteira.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+          <section
+            class="rounded-4xl border border-white/70 bg-[#f7f3ea]/90 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur"
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.25em] text-moss"
+                >
+                  Novo movimento
+                </p>
+                <h2 class="mt-2 font-display text-3xl text-forest">
+                  Adicionar posição
+                </h2>
+              </div>
+              <div
+                class="rounded-full bg-forest px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-sand"
+              >
+                Form
+              </div>
+            </div>
+
+            <form action="/assets" method="post" class="mt-6 space-y-4">
+              <div>
+                <label
+                  for="asset_id"
+                  class="mb-2 block text-sm font-bold text-forest"
+                  >Ativo</label
+                >
+                <select
+                  id="asset_id"
+                  name="asset_id"
+                  class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                >
+                  {% for asset in available_assets %}
+                  <option value="{{ asset.id }}">
+                    {{ asset.name }} - {{ asset.unit_value | brl }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    for="quantity"
+                    class="mb-2 block text-sm font-bold text-forest"
+                    >Quantidade</label
+                  >
+                  <input
+                    id="quantity"
+                    name="quantity"
+                    type="number"
+                    step="0.0001"
+                    min="0"
+                    placeholder="Ex.: 0.50"
+                    class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-forest/35 focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="unit_value"
+                    class="mb-2 block text-sm font-bold text-forest"
+                    >Valor unitário</label
+                  >
+                  <input
+                    id="unit_value"
+                    name="unit_value"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Ex.: 10000"
+                    class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-forest/35 focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="inline-flex w-full items-center justify-center rounded-2xl bg-forest px-4 py-3.5 text-sm font-bold text-sand transition hover:bg-[#183013]"
+              >
+                Salvar posição
+              </button>
+            </form>
+
+            <div
+              class="mt-6 rounded-3xl border border-forest/10 bg-white/80 p-5"
+            >
+              <p class="text-sm font-bold text-forest">Dica operacional</p>
+              <p class="mt-2 text-sm leading-relaxed text-forest/70">
+                Os campos acima alimentam a rota de compra e atualizam a lista
+                de ativos da carteira.
+              </p>
+            </div>
+          </section>
+
+          <section
+            class="rounded-4xl border border-white/70 bg-[#f7f3ea]/90 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur"
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.25em] text-moss"
+                >
+                  Carteira
+                </p>
+                <h2 class="mt-2 font-display text-3xl text-forest">
+                  Ativos em custódia
+                </h2>
+              </div>
+              <div
+                class="rounded-full border border-forest/10 bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-moss"
+              >
+                {{ total_positions }} itens
+              </div>
+            </div>
+
+            <div
+              class="mt-6 overflow-hidden rounded-3xl border border-forest/10 bg-white"
+            >
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm">
+                  <thead
+                    class="bg-sand/80 text-xs uppercase tracking-[0.18em] text-forest/60"
+                  >
+                    <tr>
+                      <th class="px-5 py-4 font-bold">Ativo</th>
+                      <th class="px-5 py-4 font-bold">Quantidade</th>
+                      <th class="px-5 py-4 font-bold">Preço médio</th>
+                      <th class="px-5 py-4 font-bold">Total</th>
+                      <th class="px-5 py-4 font-bold">Resultado</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-forest/10 text-forest/80">
+                    {% if total_positions == 0 %}
+                    <tr>
+                      <td
+                        colspan="5"
+                        class="px-5 py-10 text-center text-sm text-forest/60"
+                      >
+                        Nenhuma posição cadastrada ainda. Use o formulário ao
+                        lado para começar.
+                      </td>
+                    </tr>
+                    {% else %} {% for asset in owned_assets %}
+                    <tr class="hover:bg-sand/40">
+                      <td class="px-5 py-4 font-bold text-forest">
+                        {{ asset.name }}
+                      </td>
+                      <td class="px-5 py-4">{{ asset.quantity_owned }}</td>
+                      <td class="px-5 py-4">{{ asset.unit_value | brl }}</td>
+                      <td class="px-5 py-4">
+                        {{ (asset.quantity_owned * asset.unit_value) | brl }}
+                      </td>
+                      <td
+                        class="px-5 py-4 {% if asset.value_delta >= 0.0 %}text-emerald-700{% else %}text-rose-700{% endif %}"
+                      >
+                        {{ asset.value_delta | brl }}
+                      </td>
+                    </tr>
+                    {% endfor %} {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="mt-6 grid gap-3 sm:grid-cols-2">
+              {% for asset in available_assets %}
+              <div class="rounded-3xl border border-forest/10 bg-white/80 p-4">
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.2em] text-moss"
+                >
+                  Disponível
+                </p>
+                <p class="mt-2 text-lg font-bold text-forest">
+                  {{ asset.name }}
+                </p>
+                <p class="mt-1 text-sm text-forest/70">
+                  {{ asset.unit_value | brl }}
+                </p>
+              </div>
+              {% endfor %}
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

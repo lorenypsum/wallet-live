@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wallet Live | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Nunito+Sans:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Nunito Sans", "sans-serif"],
+              display: ["DM Serif Display", "serif"],
+            },
+            colors: {
+              forest: "#1e3a1a",
+              moss: "#5f7a58",
+              sand: "#ebe5d5",
+              clay: "#b5712e",
+              ink: "#0f172a",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-sand text-ink font-sans">
+    <div class="relative isolate overflow-hidden">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(181,113,46,0.16),transparent_32%),radial-gradient(circle_at_20%_20%,rgba(95,122,88,0.18),transparent_28%),linear-gradient(180deg,#f2ecde_0%,#ebe5d5_35%,#e6dfcd_100%)]"
+      ></div>
+
+      <header
+        class="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-10"
+      >
+        <a href="/" class="group inline-flex items-center gap-3">
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest text-sand shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
+          >
+            <span class="text-xl font-bold">W</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">
+              Wallet Live
+            </p>
+            <p class="text-sm text-forest/70">Gestão clara de ativos</p>
+          </div>
+        </a>
+
+        <div class="hidden items-center gap-3 sm:flex">
+          {% if logged_in %}
+          <a
+            href="/assets"
+            class="rounded-full border border-forest/15 bg-white/70 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
+            >Dashboard</a
+          >
+          <a
+            href="/logout"
+            class="rounded-full bg-clay px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#9a5e24]"
+            >Sair</a
+          >
+          {% else %}
+          <a
+            href="/login"
+            class="rounded-full border border-forest/15 bg-white/70 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
+            >Login</a
+          >
+          <a
+            href="/register"
+            class="rounded-full bg-clay px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#9a5e24]"
+            >Registrar</a
+          >
+          {% endif %}
+        </div>
+      </header>
+
+      <main
+        class="relative z-10 mx-auto grid min-h-[calc(100vh-88px)] max-w-7xl items-center gap-14 px-6 pb-14 pt-4 sm:px-10 lg:grid-cols-[1.1fr_0.9fr]"
+      >
+        <section>
+          <div
+            class="mb-8 inline-flex items-center gap-2 rounded-full border border-forest/15 bg-white/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-moss shadow-sm"
+          >
+            <span class="h-2 w-2 rounded-full bg-clay"></span>
+            Painel financeiro
+          </div>
+
+          {% if logged_in %}
+          <h1
+            class="max-w-2xl font-display text-5xl leading-[0.95] text-forest md:text-7xl"
+          >
+            Bem-vindo, {{ username }}.
+            <span class="italic text-clay">Seu dashboard</span> está pronto.
+          </h1>
+          <p class="mt-6 max-w-xl text-lg leading-relaxed text-forest/75">
+            Entre no painel para acompanhar posições, adicionar ativos e sair
+            quando terminar.
+          </p>
+          {% else %}
+          <h1
+            class="max-w-2xl font-display text-5xl leading-[0.95] text-forest md:text-7xl"
+          >
+            Organize seus ativos com uma experiência mais clara e elegante.
+          </h1>
+          <p class="mt-6 max-w-xl text-lg leading-relaxed text-forest/75">
+            Faça login ou crie sua conta para acessar a área privada e controlar
+            seu portfólio.
+          </p>
+          {% endif %}
+
+          <div class="mt-10 flex flex-wrap gap-4">
+            {% if logged_in %}
+            <a
+              href="/assets"
+              class="inline-flex items-center justify-center rounded-full bg-forest px-7 py-3.5 text-sm font-bold text-sand shadow-lg shadow-forest/20 transition hover:-translate-y-0.5 hover:bg-[#183013]"
+            >
+              Abrir dashboard
+            </a>
+            <a
+              href="/logout"
+              class="inline-flex items-center justify-center rounded-full border border-forest/20 bg-white/70 px-7 py-3.5 text-sm font-bold text-forest transition hover:bg-white"
+            >
+              Sair
+            </a>
+            {% else %}
+            <a
+              href="/login"
+              class="inline-flex items-center justify-center rounded-full bg-forest px-7 py-3.5 text-sm font-bold text-sand shadow-lg shadow-forest/20 transition hover:-translate-y-0.5 hover:bg-[#183013]"
+            >
+              Entrar
+            </a>
+            <a
+              href="/register"
+              class="inline-flex items-center justify-center rounded-full border border-forest/20 bg-white/70 px-7 py-3.5 text-sm font-bold text-forest transition hover:bg-white"
+            >
+              Criar conta
+            </a>
+            {% endif %}
+          </div>
+
+          <div class="mt-10 grid gap-4 sm:grid-cols-3">
+            <div
+              class="rounded-3xl border border-forest/10 bg-white/70 p-5 shadow-sm backdrop-blur"
+            >
+              <p
+                class="text-xs font-bold uppercase tracking-[0.22em] text-moss"
+              >
+                Segurança
+              </p>
+              <p class="mt-3 text-sm leading-relaxed text-forest/75">
+                Autenticação simples com cookie e logout direto.
+              </p>
+            </div>
+            <div
+              class="rounded-3xl border border-forest/10 bg-white/70 p-5 shadow-sm backdrop-blur"
+            >
+              <p
+                class="text-xs font-bold uppercase tracking-[0.22em] text-moss"
+              >
+                Dashboard
+              </p>
+              <p class="mt-3 text-sm leading-relaxed text-forest/75">
+                Visão de ativos, posições e ações em uma só tela.
+              </p>
+            </div>
+            <div
+              class="rounded-3xl border border-forest/10 bg-white/70 p-5 shadow-sm backdrop-blur"
+            >
+              <p
+                class="text-xs font-bold uppercase tracking-[0.22em] text-moss"
+              >
+                Fluxo rápido
+              </p>
+              <p class="mt-3 text-sm leading-relaxed text-forest/75">
+                Login, registro e acesso ao painel sem fricção.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid gap-4">
+          <div
+            class="rounded-3xl border border-white/70 bg-[#f7f3ea]/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur"
+          >
+            <div class="flex items-start justify-between gap-6">
+              <div>
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.25em] text-moss"
+                >
+                  Painel em destaque
+                </p>
+                <h2 class="mt-3 font-display text-3xl text-forest">
+                  Leitura rápida do seu patrimônio
+                </h2>
+              </div>
+              <div
+                class="rounded-2xl bg-forest px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-sand"
+              >
+                Live
+              </div>
+            </div>
+
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              <div
+                class="rounded-3xl bg-forest p-5 text-sand shadow-lg shadow-forest/15"
+              >
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.2em] text-sand/70"
+                >
+                  Carteira
+                </p>
+                <p class="mt-4 text-3xl font-display">Visão central</p>
+                <p class="mt-2 text-sm leading-relaxed text-sand/80">
+                  Monitore ativos e resultados em uma experiência limpa.
+                </p>
+              </div>
+              <div
+                class="rounded-3xl border border-forest/10 bg-white p-5 shadow-sm"
+              >
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.2em] text-moss"
+                >
+                  Acesso
+                </p>
+                <p class="mt-4 text-3xl font-display text-forest">
+                  Login seguro
+                </p>
+                <p class="mt-2 text-sm leading-relaxed text-forest/70">
+                  Entre para abrir o dashboard ou crie sua conta em poucos
+                  passos.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="rounded-3xl border border-forest/10 bg-white/75 p-6 shadow-sm backdrop-blur"
+          >
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">
+              Resumo
+            </p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-3">
+              <div>
+                <p class="text-3xl font-display text-forest">24h</p>
+                <p class="mt-1 text-sm text-forest/70">
+                  Interface pronta para uso rápido.
+                </p>
+              </div>
+              <div>
+                <p class="text-3xl font-display text-forest">100%</p>
+                <p class="mt-1 text-sm text-forest/70">
+                  Foco no acesso ao painel privado.
+                </p>
+              </div>
+              <div>
+                <p class="text-3xl font-display text-forest">2 ações</p>
+                <p class="mt-1 text-sm text-forest/70">
+                  Login e registro como entradas principais.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
