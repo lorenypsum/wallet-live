@@ -169,6 +169,9 @@ async fn register(
                 flash_redirect("/register", "error", "Esse usuário já está em uso."),
             ));
         }
+        Err(AppError::Validation(message)) => {
+            return Ok((jar, flash_redirect("/register", "error", &message)));
+        }
         Err(other_err) => return Err(other_err),
     };
     let token = user.auth_token()?;
