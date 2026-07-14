@@ -1,6 +1,6 @@
 # Wallet Live
 
-Wallet Live e uma aplicacao web em Rust para autenticacao de usuarios e gestao de investimentos.
+Wallet Live é uma aplicacao web em Rust para gestão de carteira de investimentos, facilita a atualização de preços dinamicamente via BRAPI e apresenta métricas da carteira.
 
 ## Producao
 
