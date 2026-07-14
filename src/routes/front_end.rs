@@ -253,6 +253,7 @@ struct DeleteOwnedAssetForm {
 }
 
 async fn create_position(
+    State(state): State<AppState>,
     repository: Repository,
     user: User,
     Form(request): Form<CreatePositionForm>,
@@ -264,14 +265,28 @@ async fn create_position(
     let bought_for = parse_positive("Preço de compra", &request.bought_for)?;
     let current_price = parse_positive("Preço atual", &request.current_price)?;
 
+    let brapi_quotes = fetch_quotes(
+        &state.http_client,
+        &state.brapi_token,
+        std::slice::from_ref(&symbol),
+    )
+    .await
+    .unwrap_or_default();
+    let (resolved_name, resolved_current_price) =
+        merge_asset_data_with_brapi(name, current_price, brapi_quotes.get(&symbol));
+
     let asset = match repository.find_asset_by_symbol(&symbol).await? {
         Some(asset) => {
             repository
-                .update_asset(asset.id, None, None, Some(current_price))
+                .update_asset(asset.id, None, None, Some(resolved_current_price))
                 .await?;
             asset
         }
-        None => repository.create_asset(name, symbol, current_price).await?,
+        None => {
+            repository
+                .create_asset(resolved_name, symbol, resolved_current_price)
+                .await?
+        }
     };
 
     repository
@@ -457,6 +472,35 @@ fn normalize_name(value: &str, symbol: &str) -> Result<String, AppError> {
     Ok(trimmed.to_string())
 }
 
+fn merge_asset_data_with_brapi(
+    fallback_name: String,
+    fallback_current_price: f64,
+    quote: Option<&BrapiQuote>,
+) -> (String, f64) {
+    let name_from_brapi = quote.and_then(|item| {
+        item.data.as_ref().and_then(|data| {
+            data.short_name
+                .as_ref()
+                .or(data.long_name.as_ref())
+                .map(|value| value.trim())
+                .filter(|value| !value.is_empty())
+                .map(str::to_string)
+        })
+    });
+
+    let price_from_brapi = quote.and_then(|item| {
+        item.data.as_ref().and_then(|data| {
+            data.regular_market_price
+                .filter(|price| price.is_finite() && *price > 0.0)
+        })
+    });
+
+    (
+        name_from_brapi.unwrap_or(fallback_name),
+        price_from_brapi.unwrap_or(fallback_current_price),
+    )
+}
+
 fn normalize_portfolio_name(value: &str) -> Result<String, AppError> {
     let trimmed = value.trim();
     if trimmed.is_empty() {
@@ -538,10 +582,11 @@ pub mod filters {
 #[cfg(test)]
 mod tests {
     use super::{
-        normalize_bought_at, normalize_portfolio_name, parse_positive, validate_asset_id,
-        validate_positive,
+        BrapiQuote, merge_asset_data_with_brapi, normalize_bought_at, normalize_portfolio_name,
+        parse_positive, validate_asset_id, validate_positive,
     };
     use crate::error::app_error::AppError;
+    use crate::services::brapi::BrapiQuoteData;
     use time::macros::datetime;
 
     #[test]
@@ -599,5 +644,31 @@ mod tests {
             }
             other => panic!("unexpected error: {other:?}"),
         }
+    }
+
+    #[test]
+    fn merge_asset_data_with_brapi_prioritizes_quote_values() {
+        let quote = BrapiQuote {
+            symbol: "PETR4".to_string(),
+            data: Some(BrapiQuoteData {
+                regular_market_price: Some(40.66),
+                short_name: Some("PETR4".to_string()),
+                long_name: Some("Petroleo Brasileiro SA Pfd".to_string()),
+            }),
+        };
+
+        let (name, price) =
+            merge_asset_data_with_brapi("Petrobras".to_string(), 39.50, Some(&quote));
+
+        assert_eq!(name, "PETR4");
+        assert_eq!(price, 40.66);
+    }
+
+    #[test]
+    fn merge_asset_data_with_brapi_falls_back_when_quote_is_missing() {
+        let (name, price) = merge_asset_data_with_brapi("Petrobras".to_string(), 39.50, None);
+
+        assert_eq!(name, "Petrobras");
+        assert_eq!(price, 39.50);
     }
 }
