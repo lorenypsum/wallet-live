@@ -54,7 +54,7 @@
           </div>
         </a>
 
-        <div class="hidden items-center gap-3 sm:flex">
+        <div class="flex items-center gap-2 sm:gap-3">
           <a
             href="/"
             class="rounded-full border border-forest/15 bg-white/70 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
@@ -77,7 +77,7 @@
             class="inline-flex items-center gap-3 rounded-full border border-forest/10 bg-white/60 px-4 py-2 text-sm font-semibold text-forest transition hover:bg-white/80"
           >
             <span class="h-2.5 w-2.5 rounded-full bg-clay"></span>
-            Wallet Live
+            wallet - live
           </a>
 
           <h1
@@ -131,7 +131,8 @@
                 Criar conta
               </h2>
               <p class="mt-3 text-sm leading-relaxed text-forest/70">
-                Preencha seu usuário e senha para registrar uma nova conta.
+                Username com mínimo de 3 caracteres e senha com mínimo de 9,
+                contendo número e símbolo.
               </p>
             </div>
 
@@ -156,6 +157,7 @@
                   name="username"
                   placeholder="Digite seu usuário"
                   required
+                  minlength="3"
                   class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-forest/35 focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
                 />
               </div>
@@ -170,8 +172,9 @@
                   type="password"
                   id="password"
                   name="password"
-                  placeholder="Digite sua senha"
+                  placeholder="Mínimo 9 caracteres com número e símbolo"
                   required
+                  minlength="9"
                   class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-forest/35 focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
                 />
               </div>
@@ -209,7 +212,7 @@
           target="_blank"
           rel="noopener noreferrer"
           class="font-semibold text-forest transition hover:text-clay"
-          >github</a
+          >GitHub</a
         >
       </footer>
     </div>

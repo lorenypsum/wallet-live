@@ -44,9 +44,21 @@
           class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-5 sm:px-10"
         >
           <div>
-            <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">
-              wallet - live
-            </p>
+            <a href="/" class="group inline-flex items-center gap-3">
+              <div
+                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest text-sand shadow-lg shadow-forest/25 transition group-hover:-translate-y-0.5"
+              >
+                <span class="text-xl font-bold">W</span>
+              </div>
+              <div>
+                <p
+                  class="text-xs font-bold uppercase tracking-[0.25em] text-moss"
+                >
+                  wallet - live
+                </p>
+                <p class="text-sm text-forest/70">Gestão clara de ativos</p>
+              </div>
+            </a>
             <h1 class="mt-2 font-display text-4xl text-forest">Sua carteira</h1>
             <p class="mt-1 text-sm text-forest/70">
               Preços atualizados com BRAPI para {{ username }}.
@@ -345,8 +357,8 @@
               Cadastrar novo ativo
             </h2>
             <p class="mt-2 max-w-2xl text-sm leading-relaxed text-forest/70">
-              Escolha uma opção baseada na BRAPI, informe o preço que você
-              pagou, a quantidade e a hora da compra.
+              Selecione um ativo da lista BRAPI e informe preço de compra,
+              quantidade e horário da operação.
             </p>
           </div>
 
@@ -400,8 +412,8 @@
                 id="preset-current-price"
                 class="mt-2 text-sm font-semibold text-forest/70"
               >
-                Preco BRAPI agora: {% if preset_assets.len() > 0 %}R$ {{
-                preset_assets[0].current_price }}{% else %}indisponivel{% endif
+                Preço BRAPI agora: {% if preset_assets.len() > 0 %}R$ {{
+                preset_assets[0].current_price }}{% else %}indisponível{% endif
                 %}
               </p>
             </div>
@@ -496,7 +508,7 @@
           target="_blank"
           rel="noopener noreferrer"
           class="font-semibold text-forest transition hover:text-clay"
-          >github</a
+          >GitHub</a
         >
       </footer>
     </div>
@@ -521,7 +533,7 @@
       function formatBrl(value) {
         const numericValue = Number(value);
         if (!Number.isFinite(numericValue) || numericValue <= 0) {
-          return "indisponivel";
+          return "indisponível";
         }
 
         return new Intl.NumberFormat("pt-BR", {
@@ -541,7 +553,7 @@
         if (!boughtForInput.value || Number(boughtForInput.value) <= 0) {
           boughtForInput.value = currentPrice;
         }
-        presetCurrentPrice.textContent = `Preco BRAPI agora: ${formatBrl(currentPrice)}`;
+        presetCurrentPrice.textContent = `Preço BRAPI agora: ${formatBrl(currentPrice)}`;
       }
 
       function rebuildOptions(searchTerm) {
@@ -575,7 +587,7 @@
         boughtForInput.value = selected.dataset.price || boughtForInput.value;
         currentPriceInput.value =
           selected.dataset.price || currentPriceInput.value;
-        presetCurrentPrice.textContent = `Preco BRAPI agora: ${formatBrl(selected.dataset.price)}`;
+        presetCurrentPrice.textContent = `Preço BRAPI agora: ${formatBrl(selected.dataset.price)}`;
       });
 
       if (!boughtAtInput.value) {

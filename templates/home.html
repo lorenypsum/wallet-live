@@ -54,12 +54,12 @@
           </div>
         </a>
 
-        <div class="hidden items-center gap-3 sm:flex">
+        <div class="flex items-center gap-2 sm:gap-3">
           {% if logged_in %}
           <a
             href="/assets"
             class="rounded-full border border-forest/15 bg-white/70 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
-            >Dashboard</a
+            >Carteira</a
           >
           <a
             href="/logout"
@@ -70,7 +70,7 @@
           <a
             href="/login"
             class="rounded-full border border-forest/15 bg-white/70 px-5 py-2 text-sm font-semibold text-forest transition hover:bg-white"
-            >Login</a
+            >Entrar</a
           >
           <a
             href="/register"
@@ -100,8 +100,8 @@
             <span class="italic text-clay">Seu dashboard</span> está pronto.
           </h1>
           <p class="mt-6 max-w-xl text-lg leading-relaxed text-forest/75">
-            Entre no painel para acompanhar posições, adicionar ativos e sair
-            quando terminar.
+            Acompanhe posições, atualize seu perfil e mantenha os dados da
+            carteira sempre organizados.
           </p>
           {% else %}
           <h1
@@ -110,8 +110,8 @@
             Organize seus ativos com uma experiência mais clara e elegante.
           </h1>
           <p class="mt-6 max-w-xl text-lg leading-relaxed text-forest/75">
-            Faça login ou crie sua conta para acessar a área privada e controlar
-            seu portfólio.
+            Faça login ou crie sua conta para acessar a carteira, visualizar
+            cotações da BRAPI e registrar suas posições.
           </p>
           {% endif %}
 
@@ -256,13 +256,13 @@
               <div>
                 <p class="text-3xl font-display text-forest">100%</p>
                 <p class="mt-1 text-sm text-forest/70">
-                  Foco no acesso ao painel privado.
+                  Foco na gestão da carteira e perfil.
                 </p>
               </div>
               <div>
-                <p class="text-3xl font-display text-forest">2 ações</p>
+                <p class="text-3xl font-display text-forest">3 fluxos</p>
                 <p class="mt-1 text-sm text-forest/70">
-                  Login e registro como entradas principais.
+                  Login, registro e edição de perfil integrados.
                 </p>
               </div>
             </div>
@@ -279,7 +279,7 @@
           target="_blank"
           rel="noopener noreferrer"
           class="font-semibold text-forest transition hover:text-clay"
-          >github</a
+          >GitHub</a
         >
       </footer>
     </div>
