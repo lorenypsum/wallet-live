@@ -1,25 +1,29 @@
+use std::collections::{BTreeSet, HashMap};
+
 use crate::{
     app::AppState,
     auth::user::{UnauthenticatedUser, User},
     error::app_error::AppError,
-    models::{Asset, OwnedAsset},
+    models::OwnedAsset,
     repository::repository_manager::Repository,
+    services::brapi::{BrapiQuote, PRESET_ASSETS, fetch_quotes},
 };
 use askama::Template;
 use axum::{
     Form, Router,
-    extract::Query,
+    extract::{Query, State},
     response::{Html, IntoResponse, Redirect},
     routing::get,
 };
 use axum_extra::extract::{CookieJar, cookie::Cookie};
 use serde::Deserialize;
+use time::{PrimitiveDateTime, format_description::FormatItem, macros::format_description};
 use tokio::try_join;
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(home))
-        .route("/assets", get(assets).post(purchase_asset))
+        .route("/assets", get(assets).post(create_position))
         .route("/assets/update", axum::routing::post(update_owned_asset))
         .route("/login", get(login_page).post(login))
         .route("/logout", get(logout))
@@ -50,6 +54,44 @@ struct LoginPage {
 #[template(path = "register.html")]
 struct RegisterPage {
     error: Option<String>,
+}
+
+#[derive(Clone)]
+struct PresetAssetView {
+    symbol: String,
+    name: String,
+    current_price: f64,
+}
+
+#[derive(Clone)]
+struct PortfolioItem {
+    asset_id: i64,
+    name: String,
+    symbol: String,
+    quantity_owned: f64,
+    bought_for: f64,
+    bought_at_input: String,
+    current_price: f64,
+    current_value: f64,
+    result_value: f64,
+    result_percent: f64,
+    is_profit: bool,
+}
+
+#[derive(Template)]
+#[template(path = "assets.html")]
+#[allow(dead_code)]
+pub struct AssetsPage {
+    username: String,
+    portfolio: Vec<PortfolioItem>,
+    preset_assets: Vec<PresetAssetView>,
+    total_positions: usize,
+    total_invested: f64,
+    total_current_value: f64,
+    total_delta: f64,
+    total_return_percent: f64,
+    error: Option<String>,
+    success: Option<String>,
 }
 
 async fn login_page(Query(query): Query<FlashQuery>) -> Result<Html<String>, AppError> {
@@ -136,43 +178,32 @@ async fn register(
     ))
 }
 
-#[derive(Template)]
-#[template(path = "assets.html")]
-#[allow(dead_code)]
-pub struct AssetsPage {
-    owned_assets: Vec<OwnedAsset>,
-    available_assets: Vec<Asset>,
-    user: User,
-    username: String,
-    total_positions: usize,
-    total_invested: f64,
-    total_current_value: f64,
-    total_delta: f64,
-    total_return_percent: f64,
-    error: Option<String>,
-    success: Option<String>,
-}
-
 pub async fn assets(
+    State(state): State<AppState>,
     repository: Repository,
     user: User,
     Query(query): Query<FlashQuery>,
 ) -> Result<Html<String>, AppError> {
-    let (owned_assets, available_assets) = try_join!(
+    let (owned_assets, _) = try_join!(
         repository.list_owned_assets(user.id()),
         repository.list_assets()
     )?;
 
-    let total_positions = owned_assets.len();
-    let total_invested = owned_assets
+    let symbols = collect_symbols(&owned_assets);
+    let quotes = fetch_quotes(&state.http_client, &state.brapi_token, &symbols)
+        .await
+        .unwrap_or_default();
+
+    let portfolio = build_portfolio(owned_assets, &quotes);
+    let preset_assets = build_presets(&quotes);
+
+    let total_positions = portfolio.len();
+    let total_invested = portfolio
         .iter()
-        .map(|asset| asset.quantity_owned * asset.bought_for)
-        .sum::<f64>();
-    let total_current_value = owned_assets
-        .iter()
-        .map(|asset| asset.quantity_owned * asset.unit_value)
+        .map(|asset| asset.bought_for * asset.quantity_owned)
         .sum();
-    let total_delta = owned_assets.iter().map(|asset| asset.value_delta).sum();
+    let total_current_value = portfolio.iter().map(|asset| asset.current_value).sum();
+    let total_delta = portfolio.iter().map(|asset| asset.result_value).sum();
     let total_return_percent = if total_invested > 0.0 {
         total_delta / total_invested * 100.0
     } else {
@@ -180,9 +211,9 @@ pub async fn assets(
     };
 
     let html = AssetsPage {
-        owned_assets,
-        available_assets,
         username: user.username().to_owned(),
+        portfolio,
+        preset_assets,
         total_positions,
         total_invested,
         total_current_value,
@@ -190,24 +221,192 @@ pub async fn assets(
         total_return_percent,
         error: query.error,
         success: query.success,
-        user,
     }
     .render()?;
     Ok(Html(html))
 }
 
 #[derive(Deserialize)]
-struct PurchaseAssetForm {
-    asset_id: i64,
-    unit_value: f64,
-    quantity: f64,
+struct CreatePositionForm {
+    asset_symbol: String,
+    asset_name: String,
+    bought_for: String,
+    current_price: String,
+    quantity: String,
+    bought_at: String,
 }
 
 #[derive(Deserialize)]
 struct UpdateOwnedAssetForm {
-    asset_id: i64,
-    unit_value: f64,
-    quantity: f64,
+    asset_id: String,
+    bought_for: String,
+    quantity: String,
+    bought_at: String,
+}
+
+async fn create_position(
+    repository: Repository,
+    user: User,
+    Form(request): Form<CreatePositionForm>,
+) -> Result<impl IntoResponse, AppError> {
+    let symbol = normalize_symbol(&request.asset_symbol)?;
+    let name = normalize_name(&request.asset_name, &symbol)?;
+    let bought_at = normalize_bought_at(&request.bought_at)?;
+    let quantity = parse_positive("Quantidade", &request.quantity)?;
+    let bought_for = parse_positive("Preço de compra", &request.bought_for)?;
+    let current_price = parse_positive("Preço atual", &request.current_price)?;
+
+    let asset = match repository.find_asset_by_symbol(&symbol).await? {
+        Some(asset) => {
+            repository
+                .update_asset(asset.id, None, None, Some(current_price))
+                .await?;
+            asset
+        }
+        None => repository.create_asset(name, symbol, current_price).await?,
+    };
+
+    repository
+        .insert_owned_asset(user.id(), asset.id, quantity, bought_for, bought_at)
+        .await?;
+
+    Ok(flash_redirect(
+        "/assets",
+        "success",
+        "Ativo cadastrado na carteira com sucesso.",
+    ))
+}
+
+async fn update_owned_asset(
+    repository: Repository,
+    user: User,
+    Form(request): Form<UpdateOwnedAssetForm>,
+) -> Result<impl IntoResponse, AppError> {
+    let asset_id = parse_asset_id(&request.asset_id)?;
+    let quantity = parse_positive("Quantidade", &request.quantity)?;
+    let bought_for = parse_positive("Preço de compra", &request.bought_for)?;
+    let bought_at = normalize_bought_at(&request.bought_at)?;
+
+    match repository
+        .update_owned_asset(user.id(), asset_id, quantity, bought_for, bought_at)
+        .await?
+    {
+        true => Ok(flash_redirect(
+            "/assets",
+            "success",
+            "Ativo atualizado com sucesso.",
+        )),
+        false => Ok(flash_redirect(
+            "/assets",
+            "error",
+            "Ativo não encontrado para edição.",
+        )),
+    }
+}
+
+fn build_presets(quotes: &HashMap<String, BrapiQuote>) -> Vec<PresetAssetView> {
+    PRESET_ASSETS
+        .iter()
+        .map(|preset| {
+            let quote = quotes.get(preset.symbol);
+            PresetAssetView {
+                symbol: preset.symbol.to_string(),
+                name: quote
+                    .and_then(|item| item.short_name.clone().or_else(|| item.long_name.clone()))
+                    .unwrap_or_else(|| preset.name.to_string()),
+                current_price: quote
+                    .and_then(|item| item.regular_market_price)
+                    .unwrap_or(0.0),
+            }
+        })
+        .collect()
+}
+
+fn build_portfolio(
+    owned_assets: Vec<OwnedAsset>,
+    quotes: &HashMap<String, BrapiQuote>,
+) -> Vec<PortfolioItem> {
+    owned_assets
+        .into_iter()
+        .map(|asset| {
+            let current_price = quotes
+                .get(&asset.symbol)
+                .and_then(|quote| quote.regular_market_price)
+                .unwrap_or(asset.unit_value);
+            let current_value = current_price * asset.quantity_owned;
+            let result_value = (current_price - asset.bought_for) * asset.quantity_owned;
+            let invested = asset.bought_for * asset.quantity_owned;
+            let result_percent = if invested > 0.0 {
+                result_value / invested * 100.0
+            } else {
+                0.0
+            };
+
+            PortfolioItem {
+                asset_id: asset.id,
+                name: asset.name,
+                symbol: asset.symbol,
+                quantity_owned: asset.quantity_owned,
+                bought_for: asset.bought_for,
+                bought_at_input: format_datetime_local(&asset.last_bought_at),
+                current_price,
+                current_value,
+                result_value,
+                result_percent,
+                is_profit: result_value >= 0.0,
+            }
+        })
+        .collect()
+}
+
+fn collect_symbols(owned_assets: &[OwnedAsset]) -> Vec<String> {
+    let mut symbols = BTreeSet::new();
+    for preset in PRESET_ASSETS {
+        symbols.insert(preset.symbol.to_string());
+    }
+    for asset in owned_assets {
+        symbols.insert(asset.symbol.clone());
+    }
+    symbols.into_iter().collect()
+}
+
+fn format_datetime_local(input: &str) -> String {
+    let normalized = input.replace(' ', "T");
+    normalized.chars().take(16).collect()
+}
+
+fn normalize_bought_at(value: &str) -> Result<PrimitiveDateTime, AppError> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Err(AppError::Validation(
+            "Informe a data e hora da compra.".to_string(),
+        ));
+    }
+
+    const DATETIME_LOCAL_FORMAT: &[FormatItem<'static>] =
+        format_description!("[year]-[month]-[day]T[hour]:[minute]");
+
+    PrimitiveDateTime::parse(trimmed, DATETIME_LOCAL_FORMAT).map_err(|_| {
+        AppError::Validation("A data da compra precisa estar no formato correto.".to_string())
+    })
+}
+
+fn normalize_symbol(value: &str) -> Result<String, AppError> {
+    let normalized = value.trim().to_uppercase();
+    if normalized.is_empty() || !normalized.chars().all(|ch| ch.is_ascii_alphanumeric()) {
+        return Err(AppError::Validation(
+            "Selecione um ativo válido da lista da BRAPI.".to_string(),
+        ));
+    }
+    Ok(normalized)
+}
+
+fn normalize_name(value: &str, symbol: &str) -> Result<String, AppError> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Ok(symbol.to_string());
+    }
+    Ok(trimmed.to_string())
 }
 
 fn flash_redirect(path: &str, key: &str, message: &str) -> Redirect {
@@ -235,60 +434,32 @@ fn validate_asset_id(asset_id: i64) -> Result<(), AppError> {
     Ok(())
 }
 
-async fn purchase_asset(
-    repository: Repository,
-    user: User,
-    Form(request): Form<PurchaseAssetForm>,
-) -> Result<impl IntoResponse, AppError> {
-    validate_asset_id(request.asset_id)?;
-    validate_positive("Quantidade", request.quantity)?;
-    validate_positive("Valor unitário", request.unit_value)?;
+fn parse_positive(name: &str, value: &str) -> Result<f64, AppError> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Err(AppError::Validation(format!("{name} é obrigatório.")));
+    }
 
-    repository
-        .insert_owned_asset(
-            user.id(),
-            request.asset_id,
-            request.quantity,
-            request.unit_value,
-        )
-        .await?;
-
-    Ok(flash_redirect(
-        "/assets",
-        "success",
-        "Investimento cadastrado com sucesso.",
-    ))
+    let parsed = trimmed
+        .parse::<f64>()
+        .map_err(|_| AppError::Validation(format!("{name} precisa ser um número válido.")))?;
+    validate_positive(name, parsed)?;
+    Ok(parsed)
 }
 
-async fn update_owned_asset(
-    repository: Repository,
-    user: User,
-    Form(request): Form<UpdateOwnedAssetForm>,
-) -> Result<impl IntoResponse, AppError> {
-    validate_asset_id(request.asset_id)?;
-    validate_positive("Quantidade", request.quantity)?;
-    validate_positive("Valor unitário", request.unit_value)?;
-
-    match repository
-        .update_owned_asset(
-            user.id(),
-            request.asset_id,
-            request.quantity,
-            request.unit_value,
-        )
-        .await?
-    {
-        true => Ok(flash_redirect(
-            "/assets",
-            "success",
-            "Posição atualizada com sucesso.",
-        )),
-        false => Ok(flash_redirect(
-            "/assets",
-            "error",
-            "Posição não encontrada para edição.",
-        )),
+fn parse_asset_id(value: &str) -> Result<i64, AppError> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Err(AppError::Validation(
+            "Selecione um ativo válido antes de continuar.".to_string(),
+        ));
     }
+
+    let parsed = trimmed.parse::<i64>().map_err(|_| {
+        AppError::Validation("Selecione um ativo válido antes de continuar.".to_string())
+    })?;
+    validate_asset_id(parsed)?;
+    Ok(parsed)
 }
 
 pub mod filters {
@@ -298,12 +469,18 @@ pub mod filters {
     pub fn brl(value: &f64, _env: &dyn askama::Values) -> askama::Result<String> {
         Ok(format!("R$ {:.2}", value))
     }
+
+    #[askama::filter_fn]
+    pub fn percent(value: &f64, _env: &dyn askama::Values) -> askama::Result<String> {
+        Ok(format!("{value:.2}%"))
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{validate_asset_id, validate_positive};
+    use super::{normalize_bought_at, parse_positive, validate_asset_id, validate_positive};
     use crate::error::app_error::AppError;
+    use time::macros::datetime;
 
     #[test]
     fn validate_positive_accepts_positive_values() {
@@ -328,6 +505,24 @@ mod tests {
         match err {
             AppError::Validation(message) => {
                 assert!(message.contains("ativo válido"));
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn normalize_bought_at_formats_datetime_local() {
+        let value = normalize_bought_at("2026-07-14T15:45").expect("valid datetime");
+        assert_eq!(value, datetime!(2026-07-14 15:45:00));
+    }
+
+    #[test]
+    fn parse_positive_rejects_empty_values() {
+        let err = parse_positive("Quantidade", "").expect_err("must fail");
+        match err {
+            AppError::Validation(message) => {
+                assert!(message.contains("Quantidade"));
+                assert!(message.contains("obrigatório"));
             }
             other => panic!("unexpected error: {other:?}"),
         }

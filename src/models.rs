@@ -5,6 +5,7 @@ use sqlx::types::Json;
 pub struct Asset {
     pub id: i64,
     pub name: String,
+    pub symbol: String,
     pub unit_value: f64,
 }
 
@@ -27,9 +28,11 @@ pub struct PurchasedHistory {
 pub struct OwnedAsset {
     pub id: i64,
     pub name: String,
+    pub symbol: String,
     pub unit_value: f64,
     pub bought_for: f64,
     pub value_delta: f64,
     pub quantity_owned: f64,
+    pub last_bought_at: String,
     pub purchased_history: Json<Vec<PurchasedHistory>>,
 }

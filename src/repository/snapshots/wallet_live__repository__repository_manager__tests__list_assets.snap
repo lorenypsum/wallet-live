@@ -5,7 +5,8 @@ expression: assets
 [
   {
     "id": 1,
-    "name": "Bitcoin",
+    "name": "Ambev",
+    "symbol": "ABEV3",
     "unit_value": 100.0
   }
 ]

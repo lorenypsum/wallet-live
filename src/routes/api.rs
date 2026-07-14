@@ -1,8 +1,6 @@
 use crate::{app::AppState, models::Asset};
 use crate::{
-    auth::admin::Admin,
-    error::app_error::AppError,
-    repository::repository_manager::Repository,
+    auth::admin::Admin, error::app_error::AppError, repository::repository_manager::Repository,
 };
 use axum::{Json, Router, routing::get};
 use serde::Deserialize;
@@ -25,6 +23,7 @@ pub async fn list_assets(repository: Repository) -> Result<Json<Vec<Asset>>, App
 #[derive(Deserialize)]
 pub struct CreateAssetRequest {
     pub name: String,
+    pub symbol: String,
     pub unit_value: f64,
 }
 
@@ -35,7 +34,7 @@ pub async fn create_asset(
     Json(request): Json<CreateAssetRequest>,
 ) -> Result<Json<Asset>, AppError> {
     let new_asset = repository
-        .create_asset(request.name, request.unit_value)
+        .create_asset(request.name, request.symbol, request.unit_value)
         .await?;
     Ok(Json(new_asset))
 }
@@ -44,6 +43,7 @@ pub async fn create_asset(
 pub struct UpdateAssetRequest {
     pub id: i64,
     pub name: Option<String>,
+    pub symbol: Option<String>,
     pub unit_value: Option<f64>,
 }
 
@@ -54,7 +54,7 @@ pub async fn update_asset(
     Json(request): Json<UpdateAssetRequest>,
 ) -> Result<Json<Asset>, AppError> {
     match repository
-        .update_asset(request.id, request.name, request.unit_value)
+        .update_asset(request.id, request.name, request.symbol, request.unit_value)
         .await?
     {
         Some(updated_asset) => Ok(Json(updated_asset)),

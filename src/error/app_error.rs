@@ -12,6 +12,8 @@ pub enum AppError {
     InvalidCredentials,
     #[error("Asset not found.")]
     AssetNotFound,
+    #[error("Asset already exists.")]
+    AssetAlreadyExists,
     #[error(transparent)]
     Database(#[from] sqlx::Error),
     #[error("This username already exists.")]
@@ -43,6 +45,7 @@ impl IntoResponse for AppError {
             AppError::InvalidCredentials => StatusCode::UNAUTHORIZED,
             AppError::AssetNotFound | AppError::UserNotFound => StatusCode::NOT_FOUND,
             AppError::Validation(_) => StatusCode::BAD_REQUEST,
+            AppError::AssetAlreadyExists => StatusCode::CONFLICT,
             AppError::Database(_) | AppError::TemplateError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::UsernameTaken => StatusCode::CONFLICT,
             AppError::JwtError(_) => StatusCode::INTERNAL_SERVER_ERROR,

@@ -4,6 +4,7 @@ mod error;
 mod models;
 mod repository;
 mod routes;
+mod services;
 
 //model to use in other projects
 #[tokio::main]

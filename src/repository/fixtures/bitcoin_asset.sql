@@ -1,1 +1,1 @@
-INSERT INTO assets (name, unit_value) VALUES ('Bitcoin', 100.0);
+INSERT INTO assets (name, symbol, unit_value) VALUES ('Ambev', 'ABEV3', 100.0);

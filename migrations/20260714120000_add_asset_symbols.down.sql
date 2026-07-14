@@ -1,0 +1,4 @@
+DROP INDEX IF EXISTS assets_symbol_key;
+
+ALTER TABLE assets
+DROP COLUMN IF EXISTS symbol;
