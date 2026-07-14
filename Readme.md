@@ -95,7 +95,7 @@ Este repositorio ja esta preparado para deploy com Docker no Render.
 3. Escolha runtime Docker (o Render detecta o `Dockerfile`).
 4. Configure as variaveis de ambiente no Web Service:
    - `DATABASE_URL` (obrigatoria)
-   - `BRAPI_TOKEN` (recomendada)
+   - `BRAPI_TOKEN` (recomendada) obtida em [BRAPI](https://brapi.dev)
    - `DB_MAX_CONNECTIONS` (opcional, recomendado iniciar com `5`)
 5. Em Settings do servico, copie o `Deploy Hook`.
 
