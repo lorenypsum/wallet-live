@@ -1,50 +1,95 @@
 # Wallet Live
 
-Wallet Live é uma aplicação web em Rust para autenticação de usuários e gestão de ativos/investimentos. A interface permite entrar, registrar conta, visualizar um dashboard financeiro, cadastrar e editar posições da carteira e administrar o catálogo de ativos.
+Wallet Live é uma aplicação web em Rust para autenticação de usuários e gestão de investimentos. A interface permite login, cadastro, edição de perfil, visualização da carteira e atualização de posições com cotações da BRAPI.
 
-## O que o projeto faz
+## Funcionalidades
 
-- Autentica usuários com login, registro e logout.
-- Exibe uma home pública com atalhos para login e cadastro.
-- Mostra um dashboard com métricas da carteira.
-- Permite cadastrar e editar investimentos da carteira.
-- Permite cadastrar e editar ativos do catálogo pela interface do dashboard.
-- Calcula valor investido, valor atual, resultado líquido e percentual de retorno.
-- Exibe mensagens de validação e feedback para o usuário.
+- Login, registro e logout.
+- Edição de perfil (username e senha).
+- Dashboard com métricas da carteira.
+- Cadastro, edição e exclusão de posições da carteira.
+- Atualização de preço de ativos selecionados via BRAPI.
 
-## Como executar a aplicação
+## Executar localmente
 
-1. Suba o banco PostgreSQL:
+1. Suba o PostgreSQL local com Docker Compose:
 
 ```bash
 docker compose up -d
 ```
 
-2. Configure a conexão do banco, se necessário:
+1. Configure as variáveis de ambiente no arquivo .env:
 
-```bash
-export DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+```env
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+BRAPI_TOKEN=seu_token_brapi
 ```
 
-3. Aplique as migrations:
+Se BRAPI_TOKEN não for informado, a aplicação usa um valor padrão de desenvolvimento.
+
+1. Instale SQLx CLI se ainda não tiver:
+
+```bash
+cargo install sqlx-cli --no-default-features --features rustls,postgres
+```
+
+1. Rode as migrations:
 
 ```bash
 cargo sqlx migrate run
 ```
 
-4. Execute a aplicação:
+1. Inicie o app:
 
 ```bash
 cargo run
 ```
 
-5. Acesse a aplicação em:
+1. Acesse:
 
-```text
-http://localhost:3000
+[http://localhost:3000](http://localhost:3000)
+
+## Testes
+
+```bash
+cargo test
 ```
 
-## Tecnologias usadas
+## Deploy em produção (Render)
+
+Este repositório já inclui:
+
+- Dockerfile para build e execução da aplicação.
+- Workflow de CI no GitHub Actions.
+- Workflow de deploy automático para Render após CI verde na branch master.
+
+### Passo a passo no Render
+
+1. Crie um Web Service no Render conectando este repositório.
+2. Selecione Docker como runtime (o Render detecta o Dockerfile).
+3. Configure as variáveis de ambiente no serviço:
+   - DATABASE_URL
+   - BRAPI_TOKEN
+4. Configure um banco PostgreSQL (Render Postgres, Neon, Supabase etc.) e use a URL em DATABASE_URL.
+5. Em Settings do serviço Render, copie o Deploy Hook URL.
+
+### Configurar deploy automático pelo GitHub Actions
+
+1. No GitHub do repositório, abra Settings > Secrets and variables > Actions.
+2. Crie o secret:
+   - RENDER_DEPLOY_HOOK_URL
+3. A cada push em master:
+   - CI roda testes.
+   - Se CI passar, o workflow de deploy chama o hook do Render.
+
+## Workflows disponíveis
+
+- .github/workflows/ci.yml
+  - Executa cargo test em push e pull request.
+- .github/workflows/deploy-render.yml
+  - Dispara deploy no Render quando o workflow CI conclui com sucesso na master.
+
+## Tecnologias
 
 - Rust
 - Axum
@@ -52,53 +97,6 @@ http://localhost:3000
 - SQLx
 - PostgreSQL
 - Tokio
-- Tailwind CSS via CDN
+- Tailwind CSS (CDN)
 - JWT Simple
 - password-auth
-- Cargo Insta para snapshots de teste
-
-## Qual melhoria foi implementada
-
-Nesta versão, desenvolvi uma interface utilizando a inteligência do figma para
-criar uma melhor experiência de usuário e visual. Usei o modelo de exemplo para pedir ao copilot para criar os htmls da homepage, login, registro e dashboard que inclui a visualização da carteira atualizada, com ativos que podem ser cadastrados, editados e removidos.
-
-Na parte de cadastro de ativos existem opções pré-selecionadas que foram buscadas na API de ativos da BRAPI, além de ser possível cadastrar ativos personalizados. O dashboard exibe métricas financeiras reais, como valor investido, valor atual, resultado líquido e percentual de retorno.
-
-O valor de ativos que foram cadastrados a partir das opções pré-selecionadas da BRAPI é atualizado automaticamente, enquanto os ativos personalizados permanecem com o valor definido no momento do cadastro.
- 
- As principais melhorias incluem:
-
-- Dashboard redesenhado com métricas financeiras reais.
-- Formulário para cadastrar investimento na carteira.
-- Formulário para editar investimento existente.
-- Formulários para cadastrar e editar ativos do catálogo.
-- Atualização automática do valor de ativos cadastrados a partir da BRAPI.
-- Cálculo do total investido, valor atual, resultado líquido e retorno percentual.
-- Validações para evitar quantidades e valores inválidos.
-- Mensagens de erro e sucesso no fluxo de login, registro e dashboard.
-- Testes novos para validações e edição de posição.
-- Validação de nome e senha de usuário no momento do registro, com mensagens de feedback.
-
-## Como testar sua versão
-
-```bash
-cargo test
-```
-
-Se quiser validar apenas a compilação:
-
-```bash
-cargo check
-```
-
-Se quiser aplicar as migrations antes de testar o fluxo completo:
-
-```bash
-cargo sqlx migrate run
-```
-
-## Observações
-
-- O dashboard usa a API existente para criar e editar ativos do catálogo.
-- O login e o registro agora retornam mensagens de feedback em vez de assumir sucesso silenciosamente.
-- O cálculo do histórico de investimento foi ajustado para serializar corretamente o timestamp no payload.
