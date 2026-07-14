@@ -206,63 +206,123 @@
                 </div>
               </div>
 
-              <div class="mt-5 grid gap-4 md:grid-cols-3">
-                <div>
-                  <label
-                    for="quantity-{{ asset.asset_id }}"
-                    class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
-                    >Quantidade</label
-                  >
-                  <input
-                    id="quantity-{{ asset.asset_id }}"
-                    name="quantity"
-                    type="number"
-                    step="0.0001"
-                    min="0"
-                    value="{{ asset.quantity_owned }}"
-                    class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    for="bought-for-{{ asset.asset_id }}"
-                    class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
-                    >Preço de compra</label
-                  >
-                  <input
-                    id="bought-for-{{ asset.asset_id }}"
-                    name="bought_for"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value="{{ asset.bought_for }}"
-                    class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    for="bought-at-{{ asset.asset_id }}"
-                    class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
-                    >Hora da compra</label
-                  >
-                  <input
-                    id="bought-at-{{ asset.asset_id }}"
-                    name="bought_at"
-                    type="datetime-local"
-                    value="{{ asset.bought_at_input }}"
-                    class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                class="mt-5 inline-flex rounded-2xl bg-forest px-5 py-3 text-sm font-bold text-sand transition hover:bg-[#183013]"
+              <details
+                class="mt-5 rounded-2xl border border-forest/10 bg-sand/50 p-4"
               >
-                Salvar alterações
-              </button>
+                <summary
+                  class="cursor-pointer list-none text-sm font-bold text-forest"
+                >
+                  Atualizar ativo
+                </summary>
+
+                <div class="mt-4 grid gap-4 md:grid-cols-4">
+                  <div>
+                    <label
+                      for="asset-name-{{ asset.asset_id }}"
+                      class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
+                      >Nome do ativo</label
+                    >
+                    <input
+                      id="asset-name-{{ asset.asset_id }}"
+                      name="asset_name"
+                      type="text"
+                      required
+                      value="{{ asset.name }}"
+                      class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      for="quantity-{{ asset.asset_id }}"
+                      class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
+                      >Quantidade</label
+                    >
+                    <input
+                      id="quantity-{{ asset.asset_id }}"
+                      name="quantity"
+                      type="number"
+                      step="0.0001"
+                      min="0"
+                      required
+                      value="{{ asset.quantity_owned }}"
+                      class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      for="bought-for-{{ asset.asset_id }}"
+                      class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
+                      >Preço de compra</label
+                    >
+                    <input
+                      id="bought-for-{{ asset.asset_id }}"
+                      name="bought_for"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      required
+                      value="{{ asset.bought_for }}"
+                      class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      for="current-price-{{ asset.asset_id }}"
+                      class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
+                      >Preço atual</label
+                    >
+                    <input
+                      id="current-price-{{ asset.asset_id }}"
+                      name="current_price"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      required
+                      value="{{ asset.current_price }}"
+                      class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      for="bought-at-{{ asset.asset_id }}"
+                      class="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-moss"
+                      >Hora da compra</label
+                    >
+                    <input
+                      id="bought-at-{{ asset.asset_id }}"
+                      name="bought_at"
+                      type="datetime-local"
+                      required
+                      value="{{ asset.bought_at_input }}"
+                      class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                    />
+                  </div>
+                </div>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                  <button
+                    type="submit"
+                    class="inline-flex rounded-2xl bg-forest px-5 py-3 text-sm font-bold text-sand transition hover:bg-[#183013]"
+                  >
+                    Salvar alterações
+                  </button>
+
+                  <button
+                    type="submit"
+                    formaction="/assets/delete"
+                    formmethod="post"
+                    name="asset_id"
+                    value="{{ asset.asset_id }}"
+                    class="inline-flex rounded-2xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm font-bold text-rose-700 transition hover:bg-rose-100"
+                  >
+                    Excluir ativo
+                  </button>
+                </div>
+              </details>
             </form>
             {% endfor %} {% endif %}
           </div>

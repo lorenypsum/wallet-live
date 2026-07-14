@@ -25,6 +25,7 @@ pub fn router() -> Router<AppState> {
         .route("/", get(home))
         .route("/assets", get(assets).post(create_position))
         .route("/assets/update", axum::routing::post(update_owned_asset))
+        .route("/assets/delete", axum::routing::post(delete_owned_asset))
         .route("/login", get(login_page).post(login))
         .route("/logout", get(logout))
         .route("/register", get(register_page).post(register))
@@ -239,9 +240,16 @@ struct CreatePositionForm {
 #[derive(Deserialize)]
 struct UpdateOwnedAssetForm {
     asset_id: String,
+    asset_name: String,
     bought_for: String,
+    current_price: String,
     quantity: String,
     bought_at: String,
+}
+
+#[derive(Deserialize)]
+struct DeleteOwnedAssetForm {
+    asset_id: String,
 }
 
 async fn create_position(
@@ -283,9 +291,15 @@ async fn update_owned_asset(
     Form(request): Form<UpdateOwnedAssetForm>,
 ) -> Result<impl IntoResponse, AppError> {
     let asset_id = parse_asset_id(&request.asset_id)?;
+    let asset_name = normalize_portfolio_name(&request.asset_name)?;
     let quantity = parse_positive("Quantidade", &request.quantity)?;
     let bought_for = parse_positive("Preço de compra", &request.bought_for)?;
+    let current_price = parse_positive("Preço atual", &request.current_price)?;
     let bought_at = normalize_bought_at(&request.bought_at)?;
+
+    repository
+        .update_asset(asset_id, Some(asset_name), None, Some(current_price))
+        .await?;
 
     match repository
         .update_owned_asset(user.id(), asset_id, quantity, bought_for, bought_at)
@@ -300,6 +314,27 @@ async fn update_owned_asset(
             "/assets",
             "error",
             "Ativo não encontrado para edição.",
+        )),
+    }
+}
+
+async fn delete_owned_asset(
+    repository: Repository,
+    user: User,
+    Form(request): Form<DeleteOwnedAssetForm>,
+) -> Result<impl IntoResponse, AppError> {
+    let asset_id = parse_asset_id(&request.asset_id)?;
+
+    match repository.delete_owned_asset(user.id(), asset_id).await? {
+        true => Ok(flash_redirect(
+            "/assets",
+            "success",
+            "Ativo removido da carteira com sucesso.",
+        )),
+        false => Ok(flash_redirect(
+            "/assets",
+            "error",
+            "Ativo não encontrado para exclusão.",
         )),
     }
 }
@@ -409,6 +444,17 @@ fn normalize_name(value: &str, symbol: &str) -> Result<String, AppError> {
     Ok(trimmed.to_string())
 }
 
+fn normalize_portfolio_name(value: &str) -> Result<String, AppError> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Err(AppError::Validation(
+            "Nome do ativo é obrigatório.".to_string(),
+        ));
+    }
+
+    Ok(trimmed.to_string())
+}
+
 fn flash_redirect(path: &str, key: &str, message: &str) -> Redirect {
     let encoded = urlencoding::encode(message);
     Redirect::to(&format!("{}?{}={}", path, key, encoded))
@@ -478,7 +524,10 @@ pub mod filters {
 
 #[cfg(test)]
 mod tests {
-    use super::{normalize_bought_at, parse_positive, validate_asset_id, validate_positive};
+    use super::{
+        normalize_bought_at, normalize_portfolio_name, parse_positive, validate_asset_id,
+        validate_positive,
+    };
     use crate::error::app_error::AppError;
     use time::macros::datetime;
 
@@ -523,6 +572,17 @@ mod tests {
             AppError::Validation(message) => {
                 assert!(message.contains("Quantidade"));
                 assert!(message.contains("obrigatório"));
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn normalize_portfolio_name_rejects_empty_values() {
+        let err = normalize_portfolio_name("   ").expect_err("must fail");
+        match err {
+            AppError::Validation(message) => {
+                assert!(message.contains("Nome do ativo"));
             }
             other => panic!("unexpected error: {other:?}"),
         }

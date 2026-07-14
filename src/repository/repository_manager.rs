@@ -175,6 +175,21 @@ impl Repository {
         Ok(result.rows_affected() > 0)
     }
 
+    pub async fn delete_owned_asset(&self, user_id: i64, asset_id: i64) -> sqlx::Result<bool> {
+        let result = sqlx::query!(
+            r#"
+            DELETE FROM owned_assets
+            WHERE user_id = $1 AND asset_id = $2
+            "#,
+            user_id,
+            asset_id,
+        )
+        .execute(&self.db)
+        .await?;
+
+        Ok(result.rows_affected() > 0)
+    }
+
 }
 
 
@@ -297,5 +312,37 @@ mod tests {
         assert_eq!(positions[0].quantity_owned, 3.5);
         assert_eq!(positions[0].bought_for, 125.0);
         assert_eq!(positions[0].symbol, "ABEV3");
+    }
+
+    #[sqlx::test(fixtures("bitcoin_asset"))]
+    async fn test_delete_owned_asset(db: PgPool) {
+        let user_id: i64 = sqlx::query_scalar(
+            r#"
+            INSERT INTO users (username, password_hash)
+            VALUES ('bob', 'password_hash')
+            RETURNING id
+            "#,
+        )
+        .fetch_one(&db)
+        .await
+        .expect("user inserted");
+
+        let repository = Repository::from(db.clone());
+        repository
+            .insert_owned_asset(user_id, 1, 1.0, 100.0, datetime!(2026-07-14 10:30:00))
+            .await
+            .expect("investment inserted");
+
+        let deleted = repository
+            .delete_owned_asset(user_id, 1)
+            .await
+            .expect("delete succeeds");
+
+        assert!(deleted);
+        let positions = repository
+            .list_owned_assets(user_id)
+            .await
+            .expect("positions listed");
+        assert!(positions.is_empty());
     }
 }
