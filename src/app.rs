@@ -1,7 +1,8 @@
 use axum::routing::Router;
 use color_eyre::eyre::Ok;
 use reqwest::Client;
-use sqlx::PgPool;
+use sqlx::{PgPool, postgres::PgPoolOptions};
+use std::time::Duration;
 use tokio::net::TcpListener;
 use tracing::info;
 use tracing_subscriber::{
@@ -23,7 +24,15 @@ impl AppState {
         let database_url = std::env::var("DATABASE_URL")?;
         let brapi_token =
             std::env::var("BRAPI_TOKEN").unwrap_or_else(|_| "tKyN1YgZbjWSjgpH8r8y3m".to_string());
-        let db = PgPool::connect(&database_url).await?;
+        let max_connections = std::env::var("DB_MAX_CONNECTIONS")
+            .ok()
+            .and_then(|value| value.parse::<u32>().ok())
+            .unwrap_or(5);
+        let db = PgPoolOptions::new()
+            .max_connections(max_connections)
+            .acquire_timeout(Duration::from_secs(15))
+            .connect(&database_url)
+            .await?;
         let http_client = Client::builder().build()?;
         Ok(Self {
             db,
