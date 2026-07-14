@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil | Wallet Live</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Nunito+Sans:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Nunito Sans", "sans-serif"],
+              display: ["DM Serif Display", "serif"],
+            },
+            colors: {
+              forest: "#1e3a1a",
+              moss: "#5f7a58",
+              sand: "#ebe5d5",
+              clay: "#b5712e",
+              ink: "#0f172a",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-sand font-sans text-ink">
+    <div class="relative isolate min-h-screen overflow-hidden">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(95,122,88,0.2),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(181,113,46,0.16),transparent_28%),linear-gradient(180deg,#f2ecde_0%,#ebe5d5_40%,#e5ddca_100%)]"
+      ></div>
+
+      <main
+        class="relative mx-auto grid min-h-screen w-full max-w-7xl items-center gap-12 px-6 py-10 sm:px-10 lg:grid-cols-[1.05fr_0.95fr]"
+      >
+        <section class="hidden lg:block">
+          <a
+            href="/assets"
+            class="inline-flex items-center gap-3 rounded-full border border-forest/10 bg-white/60 px-4 py-2 text-sm font-semibold text-forest transition hover:bg-white/80"
+          >
+            <span class="h-2.5 w-2.5 rounded-full bg-clay"></span>
+            Voltar para carteira
+          </a>
+
+          <h1
+            class="mt-8 max-w-xl font-display text-6xl leading-[0.95] text-forest xl:text-7xl"
+          >
+            Atualize seus dados de acesso com segurança.
+          </h1>
+          <p class="mt-6 max-w-lg text-lg leading-relaxed text-forest/75">
+            Troque nome de usuário e senha para manter seu perfil sempre
+            atualizado.
+          </p>
+
+          <div class="mt-10 grid max-w-xl gap-4 sm:grid-cols-2">
+            <div
+              class="rounded-3xl border border-forest/10 bg-white/70 p-5 shadow-sm"
+            >
+              <p
+                class="text-xs font-bold uppercase tracking-[0.22em] text-moss"
+              >
+                Novo usuário
+              </p>
+              <p class="mt-3 text-sm leading-relaxed text-forest/75">
+                Use ao menos 3 caracteres para o nome de usuário.
+              </p>
+            </div>
+            <div
+              class="rounded-3xl border border-forest/10 bg-white/70 p-5 shadow-sm"
+            >
+              <p
+                class="text-xs font-bold uppercase tracking-[0.22em] text-moss"
+              >
+                Nova senha
+              </p>
+              <p class="mt-3 text-sm leading-relaxed text-forest/75">
+                Mínimo de 9 caracteres, com número e símbolo.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div
+            class="mx-auto w-full max-w-md rounded-[2rem] border border-white/70 bg-[#f7f3ea]/92 p-7 text-ink shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur sm:p-9"
+          >
+            <div class="mb-8">
+              <p
+                class="text-xs font-bold uppercase tracking-[0.24em] text-moss"
+              >
+                Perfil
+              </p>
+              <h2 class="mt-3 font-display text-4xl text-forest">
+                Editar dados de acesso
+              </h2>
+              <p class="mt-3 text-sm leading-relaxed text-forest/70">
+                Usuário atual: <strong>{{ username }}</strong>
+              </p>
+            </div>
+
+            {% if success.is_some() %}
+            <div
+              class="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700"
+            >
+              {{ success.as_ref().unwrap() }}
+            </div>
+            {% endif %} {% if error.is_some() %}
+            <div
+              class="mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700"
+            >
+              {{ error.as_ref().unwrap() }}
+            </div>
+            {% endif %}
+
+            <form action="/profile" method="post" class="space-y-5">
+              <div>
+                <label
+                  for="username"
+                  class="mb-2 block text-sm font-bold text-forest"
+                  >Novo usuário</label
+                >
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  required
+                  minlength="3"
+                  value="{{ username }}"
+                  class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-forest/35 focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="password"
+                  class="mb-2 block text-sm font-bold text-forest"
+                  >Nova senha</label
+                >
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  minlength="9"
+                  placeholder="Mínimo 9 caracteres com número e símbolo"
+                  class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-forest/35 focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="confirm_password"
+                  class="mb-2 block text-sm font-bold text-forest"
+                  >Confirmar nova senha</label
+                >
+                <input
+                  type="password"
+                  id="confirm_password"
+                  name="confirm_password"
+                  required
+                  minlength="9"
+                  placeholder="Repita a nova senha"
+                  class="w-full rounded-2xl border border-forest/15 bg-white px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-forest/35 focus:border-clay focus:ring-4 focus:ring-[rgba(181,113,46,0.12)]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                class="inline-flex w-full items-center justify-center rounded-2xl bg-forest px-4 py-3.5 text-sm font-bold text-sand transition hover:bg-[#183013] focus:outline-none focus:ring-4 focus:ring-[rgba(30,58,26,0.15)]"
+              >
+                Salvar perfil
+              </button>
+            </form>
+
+            <div
+              class="mt-7 flex items-center justify-between gap-4 text-sm text-forest/70"
+            >
+              <a
+                href="/assets"
+                class="font-semibold text-forest hover:text-clay"
+                >Voltar para carteira</a
+              >
+              <a
+                href="/logout"
+                class="font-semibold text-clay hover:text-[#9a5e24]"
+                >Sair</a
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

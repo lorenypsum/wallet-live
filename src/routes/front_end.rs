@@ -2,7 +2,7 @@ use std::collections::{BTreeSet, HashMap};
 
 use crate::{
     app::AppState,
-    auth::user::{UnauthenticatedUser, User},
+    auth::user::{UnauthenticatedUser, User, validate_registration_credentials},
     error::app_error::AppError,
     models::OwnedAsset,
     repository::repository_manager::Repository,
@@ -24,6 +24,7 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(home))
         .route("/assets", get(assets).post(create_position))
+        .route("/profile", get(profile_page).post(update_profile))
         .route("/assets/update", axum::routing::post(update_owned_asset))
         .route("/assets/delete", axum::routing::post(delete_owned_asset))
         .route("/login", get(login_page).post(login))
@@ -55,6 +56,14 @@ struct LoginPage {
 #[template(path = "register.html")]
 struct RegisterPage {
     error: Option<String>,
+}
+
+#[derive(Template)]
+#[template(path = "profile.html")]
+struct ProfilePage {
+    username: String,
+    error: Option<String>,
+    success: Option<String>,
 }
 
 #[derive(Clone)]
@@ -106,6 +115,19 @@ pub async fn logout(jar: CookieJar) -> impl IntoResponse {
 
 async fn register_page(Query(query): Query<FlashQuery>) -> Result<Html<String>, AppError> {
     let html = RegisterPage { error: query.error }.render()?;
+    Ok(Html(html))
+}
+
+async fn profile_page(
+    user: User,
+    Query(query): Query<FlashQuery>,
+) -> Result<Html<String>, AppError> {
+    let html = ProfilePage {
+        username: user.username().to_owned(),
+        error: query.error,
+        success: query.success,
+    }
+    .render()?;
     Ok(Html(html))
 }
 
@@ -179,6 +201,59 @@ async fn register(
     Ok((
         jar.add(cookie),
         flash_redirect("/assets", "success", "Conta criada com sucesso."),
+    ))
+}
+
+#[derive(Deserialize)]
+struct UpdateProfileForm {
+    username: String,
+    password: String,
+    confirm_password: String,
+}
+
+async fn update_profile(
+    repository: Repository,
+    user: User,
+    jar: CookieJar,
+    Form(request): Form<UpdateProfileForm>,
+) -> Result<impl IntoResponse, AppError> {
+    if request.password != request.confirm_password {
+        return Ok((
+            jar,
+            flash_redirect("/profile", "error", "Confirmação de senha não confere."),
+        ));
+    }
+
+    let normalized_username = request.username.trim().to_string();
+    match validate_registration_credentials(&normalized_username, &request.password) {
+        Ok(()) => {}
+        Err(AppError::Validation(message)) => {
+            return Ok((jar, flash_redirect("/profile", "error", &message)));
+        }
+        Err(other_err) => return Err(other_err),
+    }
+
+    let password_hash = password_auth::generate_hash(&request.password);
+    let updated_user = match repository
+        .update_user_credentials(user.id(), &normalized_username, &password_hash)
+        .await
+    {
+        Ok(user_record) => User::new(user_record.id, user_record.username),
+        Err(sqlx::Error::Database(db_err)) if db_err.is_unique_violation() => {
+            return Ok((
+                jar,
+                flash_redirect("/profile", "error", "Esse usuário já está em uso."),
+            ));
+        }
+        Err(err) => return Err(AppError::Database(err)),
+    };
+
+    let token = updated_user.auth_token()?;
+    let cookie = Cookie::build(("token", token)).path("/").http_only(true);
+
+    Ok((
+        jar.add(cookie),
+        flash_redirect("/profile", "success", "Perfil atualizado com sucesso."),
     ))
 }
 

@@ -82,6 +82,23 @@ impl Repository {
         .await
     }
 
+    pub async fn update_user_credentials(
+        &self,
+        user_id: i64,
+        username: &str,
+        password_hash: &str,
+    ) -> sqlx::Result<UserRecord> {
+        sqlx::query_as!(
+            UserRecord,
+            "UPDATE users SET username = $2, password_hash = $3 WHERE id = $1 RETURNING id, username, password_hash",
+            user_id,
+            username,
+            password_hash
+        )
+        .fetch_one(&self.db)
+        .await
+    }
+
     pub async fn list_owned_assets(&self, user_id: i64) -> sqlx::Result<Vec<OwnedAsset>> {
         sqlx::query_as!(
             OwnedAsset,

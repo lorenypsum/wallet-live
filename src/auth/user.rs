@@ -57,7 +57,7 @@ impl UnauthenticatedUser {
     }
 }
 
-fn validate_registration_credentials(username: &str, password: &str) -> Result<(), AppError> {
+pub fn validate_registration_credentials(username: &str, password: &str) -> Result<(), AppError> {
     let trimmed_username = username.trim();
     if trimmed_username.chars().count() < 3 {
         return Err(AppError::Validation(
